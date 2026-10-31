@@ -57,6 +57,13 @@ body[data-view=example] .page-heading h1{font-size:36px;max-width:850px;letter-s
 /* Keep section links clear of the sticky header without an extra empty screen. */
 .learning-index-group,.download-panel,#workshop-agenda,.source-section{scroll-margin-top:20px}
 
+/* Give the shared question its own row before the audience, decisions and scope. */
+.session-brief-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.session-brief-grid>.field{margin:0}
+.session-brief-grid>.field:first-child{grid-column:1/-1}
+.session-brief-grid>.field>textarea{margin-top:auto}
+@media(max-width:1000px){.session-brief-grid{grid-template-columns:minmax(0,1fr)}}
+
 /* Working sketches orient the session without competing with its inputs. */
 .illustrated-page-heading{display:flex;align-items:flex-start;gap:24px}.illustrated-page-heading>.page-heading{min-width:0;flex:1}.illustrated-page-heading>.route-illustration{margin-top:2px}.illustrated-page-heading>.route-illustration,.session-review-link>.route-illustration,.session-illustrated-heading>.route-illustration{flex:none}.session-illustrated-heading{display:flex;align-items:center;gap:24px;margin-bottom:16px}.session-illustrated-heading>h2{margin:0}
 @media(max-width:600px){.illustrated-page-heading,.session-illustrated-heading{gap:16px}body[data-view=tool] .illustrated-page-heading h1{font-size:27px}}

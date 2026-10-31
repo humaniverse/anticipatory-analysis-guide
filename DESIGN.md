@@ -20,13 +20,13 @@ Facilitate a workshop   Your working session   → Brief and worksheets
 
 The four main destinations are Home, Learn the method, Your working session and Facilitate a workshop. The source guide is a persistent reference link.
 
-Learn includes every lesson, grouped as Before you begin (purpose, audience), The five-stage method (scan, prioritise, narrative, write, review), Facilitation and collaboration (collaboration, AI, care), and Communicate and continue (communication, networks, follow-through). The complete index shows all thirteen lessons. The contextual sidebar expands the current group and preserves deliberate expansion choices. Groups opened automatically do not accumulate as the reader advances.
+Learn includes every lesson, grouped as Before you begin (decision and audience), The five-stage method (scan, prioritise, narrative, write, review), Facilitation and collaboration (collaboration, AI, care), and Communicate and continue (communication, networks, follow-through). The complete index shows all twelve lessons. The contextual sidebar expands the current group and preserves deliberate expansion choices. Groups opened automatically do not accumulate as the reader advances.
 
 Working sessions contain the session brief, five worksheets, final checklist, downloads and print preview. Facilitation contains workshop planning, agenda editing and presentation mode. Facilitation and communication resources link back to their canonical lesson pages in Learn.
 
 One navigation model owns grouping, route ownership, reading order, breadcrumbs and search entries. Breadcrumbs show real ancestors without a repeated product or Home prefix. Lessons have an All lessons link and explicit previous/next labels, including group transitions. Stage views are labelled Lesson, Worked example and Your worksheet.
 
-Existing hashes remain valid. New group and utility hashes focus and scroll to their intended section. Search includes lessons, worksheets, examples, facilitation, checklist and source content with section paths; empty search offers common destinations. Mobile uses the same hierarchy in a drawer and retains a clickable parent and readable current page in the header.
+Existing hashes remain valid. The former audience lesson opens the combined decision and audience lesson; saved completion of either original lesson counts once toward reading progress. New group and utility hashes focus and scroll to their intended section. Search includes lessons, worksheets, examples, facilitation, checklist and source content with section paths; empty search offers common destinations. Mobile uses the same hierarchy in a drawer and retains a clickable parent and readable current page in the header.
 
 ## Compatibility
 

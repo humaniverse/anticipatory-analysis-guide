@@ -7,10 +7,39 @@ import {lessons,stages,examples,checklist} from '../dist/content.js';
 test('A complete workshop round-trips through backup without losing its relationships',()=>{
  const s=blankSession();s.context.question='What might change over six months?';s.context.audience='Preparedness team';
  const t=newTrend('test-trend');Object.assign(t,{title:'Variable rainfall',likelihood:'Medium',impact:'High',votes:4,shortlist:true,watch:true});s.trends.push(t);
- s.narrative.story='A conditional account';s.briefing.trends[t.id]={...emptyBrief(),summary:'A draft with uncertainty'};s.review.checks[2]=true;s.lessonDone=['scan','audience'];
+ s.narrative.story='A conditional account';s.briefing.trends[t.id]={...emptyBrief(),summary:'A draft with uncertainty'};s.review.checks[2]=true;s.lessonDone=['scan','purpose'];
  assert.deepEqual(validateSession(JSON.parse(JSON.stringify(s))),s);
  const md=exportMarkdown(s);for(const text of ['Variable rainfall','A draft with uncertainty','Medium','High','4','[x] Time horizon','A conditional account'])assert.ok(md.includes(text));
  assert.ok(!md.includes('Luma'));
+});
+test('Earlier decision and audience progress merges when importing backups or loading saved work',()=>{
+ const cases=[
+   [[],[]],
+   [['purpose'],['purpose']],
+   [['audience'],['purpose']],
+   [['purpose','audience'],['purpose']],
+   [['audience','purpose','audience'],['purpose']],
+   [['scan','audience','purpose','review'],['scan','purpose','review']]
+ ];
+ for(const [before,after] of cases) {
+   const raw=blankSession();raw.lessonDone=before;
+   raw.context={question:'What could change?',audience:'Operations',decisions:'When to prepare',geography:'Test region',horizon:'Six months'};
+   raw.trends.push({...newTrend('retained'),title:'Keep this trend',shortlist:true});
+   raw.narrative.story='Keep these relationships';raw.briefing.intro='Keep the opening';raw.briefing.trends.retained={...emptyBrief(),summary:'Keep this draft'};
+   raw.review.notes='Keep this review';raw.agenda[0].minutes=12;
+   const backup=JSON.stringify(raw),expected={...raw,lessonDone:after};
+   assert.deepEqual(validateSession(JSON.parse(backup)),expected);
+   const loaded=loadSession({getItem:key=>key===STORAGE_KEY?backup:null});
+   assert.equal(loaded.available,true);
+   assert.deepEqual(loaded.session,expected);
+   assert.deepEqual(raw.lessonDone,before);
+   const memory=new Map();
+   const storage={getItem:key=>memory.get(key)||null,setItem:(key,value)=>memory.set(key,value)};
+   assert.equal(saveSession(storage,loaded.session),true);
+   assert.deepEqual(loadSession(storage).session,loaded.session);
+   assert.deepEqual(JSON.parse(memory.get(STORAGE_KEY)).lessonDone,after);
+ }
+ for(const lessonDone of [['audience','unknown'],['audience',null]])assert.throws(()=>validateSession({...blankSession(),lessonDone}));
 });
 test('Unshortlisting preserves a previously written draft in the export',()=>{
  const s=blankSession();s.trends.push(newTrend('retained'));s.briefing.trends.retained={...emptyBrief(),summary:'Keep this thinking'};
@@ -52,7 +81,9 @@ test('All eight source sections and all six resource links are included',()=>{
  assert.equal(source.sections.length,8);assert.deepEqual(source.sections.map(s=>s.id),[1,2,3,4,5,6,7,8]);
  assert.equal(source.sections.reduce((n,s)=>n+(s.html.match(/<a href=/g)||[]).length,0),6);
  assert.ok(source.sections[2].html.includes('<table>'));assert.ok(source.sections[6].text.includes('Follow-through:'));
- for(const section of [1,2,3,4,5,6,8])assert.ok(lessons.some(l=>l.source===section));
+ assert.deepEqual(lessons.find(l=>l.id==='purpose').source,[1,2]);
+ for(const section of [1,2,3,4,5,6,8])assert.ok(lessons.some(l=>[l.source].flat().includes(section)));
+ for(const lesson of lessons)for(const section of [lesson.source].flat())assert.ok(source.sections.some(s=>s.id===section));
  for(const stage of stages){assert.ok(lessons.some(l=>l.id===stage.id));assert.ok(examples[stage.id]);}
  assert.equal(new Set(lessons.map(l=>l.id)).size,lessons.length);
 });

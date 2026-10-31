@@ -8,7 +8,7 @@ export const mainDestinations = [
 ];
 
 export const learningGroups = [
-  {id:'before-you-begin',label:'Before you begin',description:'Connect the analysis to a purpose, an audience and a useful question.',lessonIds:['purpose','audience']},
+  {id:'before-you-begin',label:'Before you begin',description:'Connect the analysis to a purpose, an audience and a useful question.',lessonIds:['purpose']},
   {id:'five-stages',label:'The trend analysis method',description:'Follow the process from emerging change to a challenged briefing.',lessonIds:stages.map(s=>s.id)},
   {id:'facilitation',label:'Facilitation and collaboration',description:'Bring different perspectives together and make room for people to think.',lessonIds:['collaboration','ai','care']},
   {id:'communicate-and-continue',label:'Communicate and continue',description:'Make the analysis useful, share the learning and prepare for the next cycle.',lessonIds:['communicate','network','follow-through']}
@@ -44,6 +44,7 @@ export function routeContext(hash='',sourceSections=[]) {
     return group?set('method',group.label,[rootCrumb('method'),current(group.label)],group.anchor,group):set('method','Learn the method',[current('Learn the method')]);
   }
   if(view==='lesson') {
+    if(id==='audience')return routeContext('#lesson/purpose',sourceSections);
     const lesson=lessonById(id),group=groupForLesson(id);
     return lesson&&group?set('method',lesson.title,[rootCrumb('method'),groupCrumb(group),current(lesson.title)],null,group):result;
   }
@@ -119,7 +120,7 @@ export function searchNavigation(query,sourceSections=[]) {
   };
   const q=query.trim().toLowerCase();
   if(!q)return [
-    {href:'#method',title:'Learn the method',description:'Find all thirteen lessons, grouped by topic.'},
+    {href:'#method',title:'Learn the method',description:`Find all ${lessons.length} lessons, grouped by topic.`},
     ...['#session','#facilitate','#checklist','#source'].map(href=>utilityEntries.find(entry=>entry.href===href))
   ].map(decorate);
   const entries=[

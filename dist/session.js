@@ -42,7 +42,8 @@ export function validateSession(raw) {
   if(!Array.isArray(raw.agenda)||raw.agenda.length!==7)throw new Error('The agenda must contain seven entries.');
   result.agenda=raw.agenda.map(a=>({title:str(object(a).title),minutes:int(a.minutes,0,1440)}));
   if(!Array.isArray(raw.lessonDone))throw new Error('Reading progress is invalid.');
-  result.lessonDone=[...new Set(raw.lessonDone.map(id=>choice(id,lessons.map(l=>l.id))))];
+  // The former audience lesson is now part of purpose; retain either completion once.
+  result.lessonDone=[...new Set(raw.lessonDone.map(id=>choice(id==='audience'?'purpose':id,lessons.map(l=>l.id))))];
   result.updatedAt=typeof raw.updatedAt==='string'&&!Number.isNaN(Date.parse(raw.updatedAt))?raw.updatedAt:new Date().toISOString();
   return result;
 }

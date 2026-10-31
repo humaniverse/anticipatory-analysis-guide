@@ -81,7 +81,7 @@ export function routeContext(hash='',sourceSections=[]) {
 
 export function contextualLinks(section) {
   if(section==='session')return [
-    {href:'#session',label:'Session brief'},
+    {href:'#session',label:'Define your analysis'},
     ...stages.map(stage=>({href:`#tool/${stage.id}`,label:stage.title,stage:Number(stage.number)})),
     {href:'#checklist',label:'Final checklist'},
     {href:'#session/downloads',label:'Save and download'}

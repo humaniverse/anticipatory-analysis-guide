@@ -58,7 +58,88 @@ export function routeIllustration(id) {
       <path d="M35 26c17-4 39-4 52 1 6 2 10 8 10 15l-1 18c0 7-5 13-12 14-17 3-35 3-51-1-7-2-11-8-11-15V42c0-8 5-14 13-16Z" fill="white"/>
       <path d="m38 38 17-2 2 20-17 2Zm29 14 14 1-1 12-14-1Z" fill="#eef3f8" stroke="#2862b3" stroke-width="1.4"/>
       <path d="m44 43 7-1m-6 7 6-1m21-11 10 5m-11-3 10 5" stroke="#2862b3" stroke-width="1.4"/>
-      <path d="m60 63 4-12" stroke="#2862b3" stroke-width="2.5"/>`
+      <path d="m60 63 4-12" stroke="#2862b3" stroke-width="2.5"/>`,
+    'before-you-begin':`<path fill="#eef3f8" stroke="none" d="M14 33c8-17 33-21 57-15s42 24 34 45-29 27-54 21S3 56 14 33Z"/>
+      <path d="m25 15 54 5-5 64-55-5Z" fill="white"/>
+      <path d="m35 30 29 3m-30 7 23 2m-24 8 17 1m-18 9 11 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M80 44c13-1 24 9 24 22s-9 24-23 24-24-10-24-23 9-23 23-23Z" fill="white"/>
+      <path d="M81 50c10 0 17 8 17 17s-7 17-17 17-18-7-18-17 8-17 18-17Z" stroke="#2862b3" stroke-width="1.2"/>
+      <path d="m81 55-5 12 5 12 5-12Z" fill="#eef3f8" stroke="#2862b3" stroke-width="1.2"/>
+      <path d="m81 55-5 12h10Z" fill="#2862b3" stroke="none"/>
+      <path d="M67 67h3m22 0h3" stroke="#2862b3" stroke-width="1.2"/>`,
+    'five-stages':`<path fill="#eef3f8" stroke="none" d="M12 32c11-17 39-24 63-15s39 28 28 48-37 25-61 17S0 52 12 32Z"/>
+      <path d="m28 16 34 2-3 41-34-3Z" fill="white"/>
+      <path d="m34 27 18 1m-19 7 14 1m-14 7 9 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M47 65c16 3 15-21 30-23m-6-4 6 4-4 6" stroke="#2862b3"/>
+      <path d="m79 51 24 3-4 34-26-3Z" fill="white"/>
+      <path d="m84 61 12 1m-13 6 11 1m-12 6 8 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M16 64c8-8 14-7 20-2m-5-1 5 1-2 5M80 32c6-8 13-12 20-12" stroke="#2862b3" stroke-dasharray="3 4"/>
+      <circle cx="14" cy="67" r="3" fill="white" stroke="#2862b3"/>
+      <circle cx="44" cy="65" r="3" fill="white" stroke="#2862b3"/>
+      <path d="m104 20-3 15" stroke="#2862b3" stroke-width="2.5"/>`,
+    facilitation:`<path fill="#eef3f8" stroke="none" d="M19 28c15-13 44-17 67-5s28 34 14 51-44 19-66 10S4 45 19 28Z"/>
+      <path d="M42 16c12-4 28-3 39 1 4 2 6 5 5 10l-1 12c0 4-3 7-7 7l-12 1-9 8 1-9-15-1c-5 0-8-4-8-8V26c0-5 2-8 7-10Z" fill="white"/>
+      <g fill="#2862b3" stroke="none"><circle cx="48" cy="31" r="2"/><circle cx="60" cy="31" r="2"/><circle cx="72" cy="31" r="2"/></g>
+      <path d="M28 51c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9ZM91 51c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9ZM59 66c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9Z" fill="white"/>
+      <path d="M13 83c0-7 6-12 15-12s15 5 15 12M76 83c0-7 6-12 15-12s15 5 15 12M44 96c0-6 6-10 15-10s15 4 15 10" stroke="#2862b3"/>
+      <path d="m40 55 6-5m29 0 6 5" stroke="#2862b3" stroke-width="1.2"/>`,
+    'communicate-and-continue':`<path fill="#eef3f8" stroke="none" d="M21 30c13-15 38-20 61-10s31 32 19 49-39 22-61 14S4 50 21 30Z"/>
+      <path d="m25 48 34-23 40 22-2 39-71-1Z" fill="white"/>
+      <path d="m38 17 35 2 13 13-2 41-48-2Z" fill="white"/>
+      <path d="m73 19-1 13h14"/>
+      <path d="m45 33 17 1m-18 9 30 1m-30 8 24 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="m25 48 35 22 39-23-2 39-71-1Z" fill="white"/>
+      <path d="m27 83 23-19m23 0 23 20" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M20 77C6 67 5 47 20 34m-8 1 8-1-2 8" stroke="#2862b3"/>
+      <path d="M94 18c10 3 15 12 14 21" stroke="#2862b3" stroke-dasharray="3 4"/>`,
+    'session-scan':`<path fill="#eef3f8" stroke="none" d="M14 33c9-17 36-23 61-15s38 28 29 47-37 25-62 18S3 53 14 33Z"/>
+      <path d="m24 45 9-24 14 1 9 24m8 0 9-25 14 1 9 24" fill="white"/>
+      <path d="m33 21 1-6 13 1v6m26-1 1-6 13 1v6M54 47c3-4 9-4 13 0"/>
+      <path d="M36 38c12 0 22 10 22 22S48 83 36 83 14 73 14 61s10-23 22-23ZM83 38c12 0 23 10 23 22S96 83 84 83 61 74 61 61s10-23 22-23Z" fill="white"/>
+      <path d="M36 45c8 0 15 7 15 15s-7 16-15 16-15-7-15-15 7-16 15-16ZM83 45c9 0 16 7 16 15s-7 16-15 16-16-7-16-15 7-16 15-16Z" fill="#eef3f8" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M28 59c0-4 3-7 7-7m41 7c0-4 3-7 7-7" stroke="#2862b3" stroke-width="1.4"/>`,
+    'session-prioritise':`<path fill="#eef3f8" stroke="none" d="M16 32c13-16 37-20 61-13s37 29 27 47-37 23-61 15S3 52 16 32Z"/>
+      <path d="m31 20 70 2-2 62-69-2Z" fill="white"/>
+      <path d="m67 21 34 1-1 30-34-1Z" fill="#eef3f8" stroke="none"/>
+      <path d="m67 22-2 60M31 51l69 1" stroke="#2862b3" stroke-width="1.2"/>
+      <path d="m40 29 17 2-2 14-17-2Zm37 33 16-1 1 15-17 1ZM8 61l17-3 3 16-17 3Z" fill="white"/>
+      <path d="m43 35 9 1m30 32 7-1m-74 0 7-1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M18 49c0-12 6-20 16-20m-6-4 6 4-5 6" stroke="#2862b3"/>`,
+    'session-narrative':`<path fill="#eef3f8" stroke="none" d="M15 33c11-18 39-22 63-12s37 28 24 47-39 23-63 13S4 51 15 33Z"/>
+      <path d="M34 56c7-5 7-15 15-20m-7-1 7 1-2 7M73 38c7 5 7 16 15 22m-1-7 1 7-7-1" stroke="#2862b3"/>
+      <path d="M73 29c7-8 15-10 23-10" stroke="#2862b3" stroke-dasharray="3 4"/>
+      <path d="m10 49 24 2-1 27-25-2Zm40-32 25 2-2 28-25-2Zm39 36 23 1-2 28-24-2Z" fill="white"/>
+      <path d="m16 59 12 1m-13 7 9 1m41-39-10-1m-1 8 12 1m28 27 12 1m-13 7 9 1" stroke="#2862b3" stroke-width="1.4"/>
+      <circle cx="102" cy="18" r="5" fill="white" stroke="#2862b3"/>`,
+    'session-write':`<path fill="#eef3f8" stroke="none" d="M17 33c12-18 39-21 61-12s35 27 24 46-37 25-62 15S6 51 17 33Z"/>
+      <path d="m31 13 46 2 14 14-3 59-61-3Z" fill="white"/>
+      <path d="m77 15-1 14h15"/>
+      <path d="m42 33 21 1m-22 9 34 1m-34 9 26 1m-27 9 20 1m-20 9 13 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="m72 73 24-44 8 5-25 44-9 5Z" fill="white"/>
+      <path d="m96 29 3-5 8 5-3 5Z" fill="#2862b3" stroke="#2862b3" stroke-width="1.2"/>
+      <path d="m72 73 7 5-9 5Z" fill="#2862b3" stroke="#2862b3" stroke-width="1.2"/>
+      <path d="m77 71 23-40" stroke="#2862b3" stroke-width="1.2"/>`,
+    'session-review':`<path fill="#eef3f8" stroke="none" d="M15 33c11-16 35-21 60-13s38 29 27 48-38 23-62 14S3 53 15 33Z"/>
+      <path d="M32 18h49c4 0 7 3 7 7l-1 59c0 4-3 7-7 7l-49-1c-4 0-6-3-6-7l1-58c0-4 2-7 6-7Z" fill="white"/>
+      <path d="m35 31 43 1-1 49-43-1Z" stroke="#2862b3" stroke-width="1.2"/>
+      <path d="m46 12 23 1 1 13-25-1Z" fill="white"/>
+      <path d="m40 43 4 4 6-8m-10 23 4 4 6-8m7-14 13 1m-13 19 9 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M90 47c9 0 16 7 16 16s-7 17-16 17-17-7-17-16 8-17 17-17Z" fill="white"/>
+      <path d="M90 52c6 0 11 5 11 11s-5 12-11 12-12-5-12-11 6-12 12-12Zm12 24 10 12" stroke="#2862b3" stroke-width="1.4"/>`,
+    'session-checklist':`<path fill="#eef3f8" stroke="none" d="M15 32c12-17 38-21 62-12s37 29 25 48-39 23-63 13S4 50 15 32Z"/>
+      <path d="m29 13 45 2 15 15-3 58-62-3Z" fill="white"/>
+      <path d="m74 15-1 15h16"/>
+      <path d="m35 33 10 1-1 10-10-1Zm-1 21 10 1-1 10-10-1Zm-1 21 10 1-1 7-10-1Z" stroke="#2862b3" stroke-width="1.2"/>
+      <path d="m37 38 2 2 5-6m-8 25 2 2 5-6m10-16 17 1m-18 20 9 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M86 56c10 0 18 7 18 17s-8 18-18 18-18-8-18-18 8-17 18-17Z" fill="white"/>
+      <path d="m77 73 6 6 12-13" stroke="#2862b3" stroke-width="2"/>`,
+    'session-save':`<path fill="#eef3f8" stroke="none" d="M17 30c14-15 40-19 62-9s34 27 23 46-38 24-61 15S4 48 17 30Z"/>
+      <path d="M18 34v-9l28 1 9 10 44 1 2 47-82 1Z" fill="white"/>
+      <path d="m36 14 41 1 13 13-2 43-54-1Z" fill="white"/>
+      <path d="m77 15-1 13h14"/>
+      <path d="m44 30 19 1m-20 7 34 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="m12 45 95 1-9 40-79-1Z" fill="white"/>
+      <path d="m60 53-1 20m-7-8 7 8 8-8M47 78h24" stroke="#2862b3" stroke-width="1.8"/>`
   };
   return `<svg class="route-illustration" viewBox="0 0 120 100" width="120" height="100" aria-hidden="true" focusable="false" fill="none" stroke="#172d43" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${sketches[id]||''}</svg>`;
 }

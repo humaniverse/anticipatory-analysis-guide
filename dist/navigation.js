@@ -89,7 +89,6 @@ export function contextualLinks(section) {
   ];
   if(section==='facilitate')return [
     {href:'#facilitate',label:'Workshop planning'},
-    {href:'#facilitate/agenda',label:'Workshop agenda'},
     {href:'#present',label:'Facilitator view'}
   ];
   return [];

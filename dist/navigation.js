@@ -9,7 +9,7 @@ export const mainDestinations = [
 
 export const learningGroups = [
   {id:'before-you-begin',label:'Before you begin',description:'Connect the analysis to a purpose, an audience and a useful question.',lessonIds:['purpose']},
-  {id:'five-stages',label:'The trend analysis method',description:'Follow the process from emerging change to a challenged briefing.',lessonIds:stages.map(s=>s.id)},
+  {id:'five-stages',label:'The trend analysis method',description:'Follow the process from emerging change to a final briefing.',lessonIds:stages.map(s=>s.id)},
   {id:'facilitation',label:'Facilitation and collaboration',description:'Bring different perspectives together and make room for people to think.',lessonIds:['collaboration','ai','care']},
   {id:'communicate-and-continue',label:'Communicate and continue',description:'Make the analysis useful, share the learning and prepare for the next cycle.',lessonIds:['communicate','network','follow-through']}
 ].map(group=>({...group,href:`#method/${group.id}`,anchor:`learn-${group.id}`}));

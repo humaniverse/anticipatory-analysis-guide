@@ -1,0 +1,6 @@
+.sites-local/
+.playwright-cli/
+*.tar.gz
+*.tar
+qa/
+output/

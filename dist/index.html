@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="An interactive guide to anticipatory humanitarian analysis. Learn the method, develop your analysis and facilitate a workshop.">
+  <title>Anticipatory analysis · A field guide</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="preload" href="./fonts/commissioner-regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation"></aside>
+  <div class="page">
+    <header class="topbar">
+      <button class="icon-button menu-toggle" id="menu-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb" hidden></nav>
+      <div class="top-actions"><span id="save-status" class="save-status" role="status">Saved on this device</span><button class="search-trigger" id="open-search"><span aria-hidden="true">⌕</span> Search the guide <kbd>/</kbd></button></div>
+    </header>
+    <main id="main" tabindex="-1"></main>
+    <footer class="footer"><span>An interactive guide to anticipatory humanitarian analysis.</span><a href="#source">About the source guide</a></footer>
+  </div>
+  <dialog id="search-dialog" class="search-dialog" aria-labelledby="search-title">
+    <div class="dialog-top"><h2 id="search-title">Find your next step</h2><button class="icon-button" data-close-dialog="search-dialog" aria-label="Close search">×</button></div>
+    <label class="sr-only" for="search-input">Search lessons, tools and the full guide</label><input id="search-input" type="search" placeholder="Try uncertainty, evidence or audience…" autocomplete="off">
+    <div id="search-results" aria-live="polite"></div>
+  </dialog>
+  <dialog id="confirm-dialog" class="confirm-dialog" aria-labelledby="confirm-title"><h2 id="confirm-title">Replace this working session?</h2><p id="confirm-copy"></p><div class="button-row"><button class="button quiet" id="confirm-cancel">Keep current work</button><button class="button danger" id="confirm-accept">Replace session</button></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="print-root"></div>
+  <noscript><p class="noscript">This interactive guide needs JavaScript. Please enable it to explore the guide and use the worksheets.</p></noscript>
+</body>
+</html>

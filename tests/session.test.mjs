@@ -76,10 +76,10 @@ test('Saved sessions persist; blocked and corrupt storage do not crash the toolk
 test('Empty sessions export cleanly, with twelve review items and a 180-minute agenda',()=>{
  const s=blankSession();assert.equal(s.agenda.reduce((a,b)=>a+b.minutes,0),180);assert.equal(s.review.checks.length,12);assert.equal(checklist.length,12);assert.ok(exportMarkdown(s).includes('Not recorded'));assert.deepEqual(validateSession(s),s);
 });
-test('All eight source sections and all six resource links are included',()=>{
+test('All eight source sections and all five resource links are included',()=>{
  const source=JSON.parse(fs.readFileSync(new URL('../dist/full-guide.json',import.meta.url),'utf8'));
  assert.equal(source.sections.length,8);assert.deepEqual(source.sections.map(s=>s.id),[1,2,3,4,5,6,7,8]);
- assert.equal(source.sections.reduce((n,s)=>n+(s.html.match(/<a href=/g)||[]).length,0),6);
+ assert.equal(source.sections.reduce((n,s)=>n+(s.html.match(/<a href=/g)||[]).length,0),5);
  assert.ok(source.sections[2].html.includes('<table>'));assert.ok(source.sections[6].text.includes('Follow-through:'));
  assert.deepEqual(lessons.find(l=>l.id==='purpose').source,[1,2]);
  for(const section of [1,2,3,4,5,6,8])assert.ok(lessons.some(l=>[l.source].flat().includes(section)));

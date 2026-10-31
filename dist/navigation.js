@@ -68,8 +68,7 @@ export function routeContext(hash='',sourceSections=[]) {
   }
   if(view==='present'&&!id)return set('facilitate','Facilitator view',[rootCrumb('facilitate'),current('Facilitator view')]);
   if(view==='communicate'&&!id) {
-    const group=learningGroups.find(item=>item.id==='communicate-and-continue');
-    return set('method','Communication overview',[rootCrumb('method'),groupCrumb(group),current('Communication overview')],null,group);
+    return routeContext('#method/communicate-and-continue',sourceSections);
   }
   if(view==='source') {
     if(!id)return set(null,'The source guide',[current('The source guide')]);
@@ -106,7 +105,7 @@ const utilityEntries=[
   {href:'#facilitate/agenda',title:'Workshop agenda',description:'Edit the stages and timings for your workshop.',terms:'agenda minutes duration breaks'},
   {href:'#present',title:'Facilitator view',description:'Present the instructions and run the workshop timer.',terms:'timer presentation fullscreen sprint'},
   {href:'#checklist',title:'Final checklist',description:'Review twelve questions before sharing the briefing.',terms:'publication review quality'},
-  {href:'#communicate',title:'Communication overview',description:'Share the analysis, build an analytical network and follow through.',terms:'communication network learning'},
+  {href:'#method/communicate-and-continue',title:'Communicate and continue',description:'Share the analysis, build an analytical network and follow through.',terms:'communication network learning'},
   {href:'#source',title:'The source guide',description:'Read the complete original guide and its references.',terms:'original reference sources'}
 ];
 

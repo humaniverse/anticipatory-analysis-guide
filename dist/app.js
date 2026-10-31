@@ -124,7 +124,14 @@ async function render({focus=true}={}){
 }
 function getFieldTarget(path){const [group,id,key]=path.split('.');if(group==='trend')return [session.trends.find(t=>t.id===id),key];if(group==='brief'){if(!session.briefing.trends[id])session.briefing.trends[id]=emptyBrief();return [session.briefing.trends[id],key];}if(group==='agenda')return [session.agenda[Number(id)],key];if(group==='review'&&id==='checks')return [session.review.checks,Number(key)];return [session[group],id];}
 function handleField(target){if(!target.dataset.field)return;const [obj,key]=getFieldTarget(target.dataset.field);if(!obj)return;let value=target.type==='checkbox'?target.checked:target.value;if(target.type==='number'){if(target.value===''||!target.checkValidity())return;value=Number(target.value);}obj[key]=value;save();const path=target.dataset.field;
- if(path.startsWith('trend.')){const id=path.split('.')[1];if(key==='title'&&$('#trend-title-'+id))$('#trend-title-'+id).textContent=value||'Untitled trend';if(['impact','likelihood'].includes(key)&&$('#matrix-view'))$('#matrix-view').innerHTML=matrix();if(key==='watch'&&$('#watch-list'))$('#watch-list').innerHTML=watchList();if(key==='shortlist'&&$('#shortlist-count'))$('#shortlist-count').textContent=session.trends.filter(t=>t.shortlist).length+' selected';}
+ if(path.startsWith('trend.')){
+  const id=path.split('.')[1];
+  if(key==='title'&&$('#trend-title-'+id))$('#trend-title-'+id).textContent=value||'Untitled trend';
+  if(key==='category'){const tag=target.closest('.trend-editor')?.querySelector('summary .tag');if(tag)tag.textContent=value;}
+  if(['impact','likelihood'].includes(key)&&$('#matrix-view'))$('#matrix-view').innerHTML=matrix();
+  if(key==='watch'&&$('#watch-list'))$('#watch-list').innerHTML=watchList();
+  if(key==='shortlist'&&$('#shortlist-count'))$('#shortlist-count').textContent=session.trends.filter(t=>t.shortlist).length+' selected';
+ }
  if(path.startsWith('narrative.')&&$('#causal-preview')){const preview=$(`[data-preview="${key}"]`,$('#causal-preview'));if(preview)preview.textContent=value||pathwayEmpty[key];}
  if(path.startsWith('review.checks')){target.closest('.check-item')?.classList.toggle('checked',value);if($('#check-count'))$('#check-count').textContent=session.review.checks.filter(Boolean).length;}
  if(path.startsWith('agenda.')){if($('#agenda-total'))$('#agenda-total').textContent=session.agenda.reduce((n,a)=>n+a.minutes,0)+' min total';if(key==='minutes'&&Number(path.split('.')[1])===activeFacilitator)resetTimer();}

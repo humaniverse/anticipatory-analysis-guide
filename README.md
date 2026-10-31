@@ -9,10 +9,12 @@ Run `node scripts/serve.mjs` from this directory and open the printed local URL.
 ## Edit
 
 - `dist/navigation.js`: shared learning groups, route ownership, breadcrumbs, reading order and search entries.
-- `dist/atlas.js`: fictional map, evidence explorer and five case exhibits.
+- `dist/atlas.js`: fictional map, evidence explorer, five case exhibits and connected stage illustrations.
 - `dist/content.js`: lessons, stage instructions, fictional examples, checklist and default agenda.
 - `dist/app.js` and `dist/styles.css`: navigation, interfaces and responsive/print presentation.
 - `dist/session.js`: versioned session model, import validation, browser storage and exports.
+- `dist/work-preview.js`: pure worksheet previews, edit targets and contextual fictional excerpts.
+- `dist/worksheet-companion.js`: responsive preview/example panel, focus management and transient display preferences.
 
 `dist/full-guide.json` contains the original document body and hyperlinks, excluding Word comments. Regenerate from the source DOCX with `scripts/extract-guide.ps1 -InputDocument <absolute-path>` while this directory is the working directory. Review adaptations if the source changes.
 
@@ -25,5 +27,7 @@ This checkout has no hosting identity attached. The original document is not bun
 ## Verification
 
 Run `npm test` for navigation coverage, route ancestry and focus targets, reading order, search, resume behaviour, session round-trips, export retention, invalid imports, unavailable storage, empty states and source coverage. Browser QA covers form entry, matrix placement, watch lists, shortlisting, briefing, review, search, persistence, downloads/restoration, facilitator timer and responsive layouts.
+
+Preview tests also cover all five stages, partial assessments, retained drafts, assumptions, escaping and model purity. Check companion panels at 1440px, 1280px, 1024px and 390px, including keyboard tabs, dialog focus, Escape, scrolling, contextual examples and Edit links. Panel interactions must preserve form inputs and keep fictional content out of saved work and exports.
 
 Fictional examples remain separate from user sessions. Qualitative labels and votes support discussion; the site does not compute risk scores or select priorities automatically.

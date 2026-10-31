@@ -31,3 +31,15 @@ Existing hashes remain valid. The former audience lesson opens the combined deci
 ## Compatibility
 
 No session schema, storage key or server API changes are needed for navigation. Reading progress, notes, agenda settings, imports and exports keep their existing behaviour. The fictional case stays separate from saved working sessions, and no risk scores or forecasts are generated.
+
+## Worksheet companion
+
+Each of the five worksheets has a companion with **Your preview** and **Luma example** tabs. At 1280px and above it occupies a sticky, independently scrolling 360–420px column; hiding it expands the editor. At narrower widths the same panel moves into a full-screen dialog, reached through Preview and Example controls. Closing returns to the invoking control and page position. Forms stay mounted throughout panel interactions. Per-stage tab, visibility, active trend, scroll and disclosure preferences live only for the current visit.
+
+The previews are derived from existing session fields: the active trend card, a qualitative matrix with unplaced trends and a watch list, a proposed causal pathway, the current briefing, and that briefing with review notes and checklist status. Briefing drafts outside the shortlist remain visibly separate. Empty fields remain empty; previews neither generate analysis nor score its quality. Edit links expand and focus the original field, including navigation from review back to writing. Keyed presentation updates preserve caret position and open assumptions.
+
+Example controls beside writing fields open relevant excerpts from the existing fictional case with a short explanation of the reasoning. The panel heading keeps the fictional label visible even while scrolling. Examples do not populate fields or enter backups and exports. The original full worked-example routes remain available.
+
+## Connected visual thread
+
+The five stage glyphs share a node-and-line vocabulary: scattered observations, selected clusters, a connected pathway, a structured briefing, then an annotated briefing. The sequence appears in the homepage process, the five-stage lesson overview and compact stage headers. Stage names and numbers carry the meaning; the SVGs are decorative and hidden from assistive technology. Current-stage navigation indicates location, never completion or quality. Preserve the existing palette and local fonts, with ochre for assumptions and plum for interpretations where these are explicitly labelled. There is no automatic entrance animation.

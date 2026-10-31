@@ -1,3 +1,4 @@
+import {stages} from './content.js';
 // Fictional learning material. Nothing in this module is added to a working session.
 const observations = [
   {letter:'A',title:'Uneven rainfall',source:'Station summary',date:'1 October',quote:'The onset and distribution of seasonal rain have become less reliable in the station record.',reading:'A pattern worth investigating. One short record cannot establish a lasting change across the region.',question:'Does the pattern hold beyond this station?',position:[236,106]},
@@ -38,8 +39,19 @@ export function observationExplorer(selected=0) {
 }
 
 export function stageGlyph(id) {
-  const paths={scan:'<circle cx="25" cy="24" r="12"/><path d="m34 33 12 12M20 26l5-7 5 3"/>',prioritise:'<path d="M12 11v35h35M24 11v35M36 11v35M12 23h35M12 35h35"/><circle cx="30" cy="29" r="4" fill="currentColor"/>',narrative:'<path d="m17 29 12-12 13 23M29 17l14-4"/><circle cx="14" cy="32" r="5"/><circle cx="29" cy="14" r="5"/><circle cx="44" cy="43" r="5"/>',write:'<path d="M16 10h28v39H16zM22 20h16M22 27h16M22 34h10M22 41h13"/>',review:'<path d="M13 13h33v26H28l-9 8v-8h-6zM22 24l6 6 11-11"/>'};
-  return `<svg class="stage-glyph" viewBox="0 0 60 60" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths[id]}</svg>`;
+  const dot=(x,y,r=3,tone='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="white" ${tone?`class="glyph-${tone}"`:''}/>`;
+  const paths={
+    scan:`<path class="glyph-guide" d="M6 47h48"/>${dot(12,38)}${dot(22,18)}${dot(31,32)}${dot(45,13)}${dot(49,41,2,'ochre')}${dot(10,11,2)}`,
+    prioritise:`<path class="glyph-guide" d="M6 47h48"/><path class="glyph-cluster" d="M9 35C8 20 22 9 33 16s10 23-3 27S10 43 9 35Z"/>${dot(13,35)}${dot(24,21)}${dot(34,32)}${dot(48,13,2)}${dot(49,41,2,'ochre')}`,
+    narrative:`<path d="M13 39 29 20 47 34"/><path class="glyph-assumption" d="m29 20 18-9"/>${dot(13,39)}${dot(29,20)}${dot(47,34)}${dot(47,11,2,'ochre')}`,
+    write:`<path class="glyph-guide" d="M10 7h40v46H10z"/><path d="M18 18h24M18 29h24M18 40h17"/>${dot(18,18)}${dot(18,29)}${dot(18,40)}<path class="glyph-assumption" d="M39 40h4"/>`,
+    review:`<path class="glyph-guide" d="M10 7h37v46H10z"/><path d="M18 18h21M18 29h21M18 40h14"/>${dot(18,18)}${dot(18,29)}${dot(18,40)}<path class="glyph-annotation" d="M40 29h14M40 33h10M35 40h5l7 7"/>${dot(50,49,3,'plum')}`
+  };
+  return `<svg class="stage-glyph" viewBox="0 0 60 60" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths[id]||paths.scan}</svg>`;
+}
+
+export function methodThread(){
+  return `<nav class="method-thread" aria-label="The five-stage process">${stages.map((stage,index)=>`<a href="#lesson/${stage.id}">${stageGlyph(stage.id)}<span>${index+1}. ${stage.short}</span></a>`).join('')}</nav>`;
 }
 
 function pathway() {

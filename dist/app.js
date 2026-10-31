@@ -185,6 +185,8 @@ function searchResults(query){
 }
 async function openSearch(){$('#search-dialog').showModal();$('#search-input').value='';$('#search-results').innerHTML=searchResults('');$('#search-input').focus();await sourceReady;if($('#search-dialog').open)$('#search-results').innerHTML=searchResults($('#search-input').value);}
 $('#open-search').addEventListener('click',openSearch);
+$('#open-about').addEventListener('click',()=>{$('#about-dialog').showModal();});
+$('#about-dialog').addEventListener('close',()=>{$('#open-about').focus({preventScroll:true});});
 $('#search-input').addEventListener('input',e=>{$('#search-results').innerHTML=searchResults(e.target.value);});
 $('#search-results').addEventListener('click',e=>{if(e.target.closest('a')){$('#search-dialog').close();if(e.target.closest('a').hash===location.hash)render();}});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!e.target.matches('input,textarea,select')&&!e.target.isContentEditable&&!document.querySelector('dialog[open]')){e.preventDefault();openSearch();}if(e.key==='Escape'&&document.body.classList.contains('nav-open')){document.body.classList.remove('nav-open');$('#menu-toggle').setAttribute('aria-expanded','false');$('#menu-toggle').setAttribute('aria-label','Open navigation');updateSidebarAccess();$('#menu-toggle').focus();}});

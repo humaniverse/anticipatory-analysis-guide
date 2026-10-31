@@ -1,5 +1,5 @@
 import {stages} from './content.js';
-// Fictional learning material. Nothing in this module is added to a working session.
+// Illustrations and fictional learning material. Nothing here is added to a working session.
 const observations = [
   {letter:'A',title:'Uneven rainfall',source:'Station summary',date:'1 October',quote:'The onset and distribution of seasonal rain have become less reliable in the station record.',reading:'A pattern worth investigating. One short record cannot establish a lasting change across the region.',question:'Does the pattern hold beyond this station?',position:[236,106]},
   {letter:'B',title:'Planting disruption',source:'Responder discussion',date:'4 October',quote:'Some farmers describe interrupted planting and less predictable agricultural income.',reading:'A possible connection between rainfall and livelihoods. The discussion does not establish how widespread the disruption is.',question:'Which households have other sources of income?',position:[154,226]},
@@ -36,6 +36,31 @@ export function observationExplorer(selected=0) {
     <div class="observation-reading" id="observation-reading" aria-live="polite" aria-atomic="true"><p class="source-meta"><span class="evidence-dot" aria-hidden="true"></span> ${o.source}<span>${o.date}</span></p><p class="observation-quote">${o.quote}</p><details class="evidence-reading"><summary>What can we infer?</summary><p>${o.reading}</p><p class="open-question">${o.question}</p></details></div>
     <p class="map-caption">All observations and locations are invented. The map is schematic.</p>
   </div>`;
+}
+
+export function routeIllustration(id) {
+  const sketches={
+    guide:`<path fill="#eef3f8" stroke="none" d="M11 38C16 16 46 12 75 20s40 27 32 48-34 22-62 17S4 63 11 38Z"/>
+      <path fill="white" d="m13 30-1 46c16-3 31 0 47 9 16-8 32-11 49-8l-1-46c-17-4-33 0-48 9-14-9-30-12-46-10Z"/>
+      <path d="M16 26c16-2 30 2 43 11 14-9 29-12 45-10l-1 45c-16-2-31 2-44 11-14-9-28-13-44-11Z" fill="white"/>
+      <path d="M59 37c-1 15 1 31 0 46"/>
+      <path d="m82 27-1 19 5-4 5 5 1-21" fill="#2862b3" stroke="none"/>
+      <path d="M25 39c9 0 16 3 23 7m-23 4c8 0 15 3 23 7m-23 4c8 0 15 3 22 7M70 51l7-2m-7 11c7-3 14-4 22-4m-22 13c7-3 14-4 22-4" stroke="#2862b3" stroke-width="1.4"/>`,
+    briefing:`<path fill="#eef3f8" stroke="none" d="M17 20c17-12 39-6 58 1s35 24 28 44-30 23-56 18S0 56 9 38Z"/>
+      <path d="M37 64c11-3 14-14 25-17m-8-2 8 2-5 6M83 35c6-4 10-10 12-17" stroke="#2862b3"/>
+      <path d="M84 48c9 4 12 12 15 20" stroke="#2862b3" stroke-dasharray="3 5"/>
+      <path d="m18 53 20 1-1 22-21-1Zm44-25 23 1-1 26-23-1Z" fill="white"/>
+      <path d="m22 61 10 1m-10 6 7 1m39-32 11 1m-11 6 8 1" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="M90 15c1-5 10-7 14-3s3 11-2 13c-6 2-12-3-12-10Z" fill="white" stroke="#2862b3"/>
+      <path d="m90 75 13-2 3 14-14 2Z" fill="white" stroke="#2862b3" stroke-dasharray="3 4"/>`,
+    workshop:`<path fill="#eef3f8" stroke="none" d="M20 26c17-13 47-16 69-5s23 36 8 51-47 19-68 9S2 40 20 26Z"/>
+      <g fill="white"><path d="m43 12 16-1 1 13-16 1Zm23 0 15 1-1 13-15-1ZM44 79l16 1-1 12-16-1Zm24 1 15-1 1 12-16 1ZM9 40l13-1 1 17-13 1Zm91-1 12 1-1 17-12-1Z"/></g>
+      <path d="M35 26c17-4 39-4 52 1 6 2 10 8 10 15l-1 18c0 7-5 13-12 14-17 3-35 3-51-1-7-2-11-8-11-15V42c0-8 5-14 13-16Z" fill="white"/>
+      <path d="m38 38 17-2 2 20-17 2Zm29 14 14 1-1 12-14-1Z" fill="#eef3f8" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="m44 43 7-1m-6 7 6-1m21-11 10 5m-11-3 10 5" stroke="#2862b3" stroke-width="1.4"/>
+      <path d="m60 63 4-12" stroke="#2862b3" stroke-width="2.5"/>`
+  };
+  return `<svg class="route-illustration" viewBox="0 0 120 100" width="120" height="100" aria-hidden="true" focusable="false" fill="none" stroke="#172d43" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${sketches[id]||''}</svg>`;
 }
 
 export function stageGlyph(id) {

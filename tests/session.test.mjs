@@ -12,6 +12,19 @@ test('A complete workshop round-trips through backup without losing its relation
  const md=exportMarkdown(s);for(const text of ['Variable rainfall','A draft with uncertainty','Medium','High','4','[x] Time horizon','A conditional account'])assert.ok(md.includes(text));
  assert.ok(!md.includes('Luma'));
 });
+test('All twelve checklist values survive storage and backup with one checklist in readable exports',()=>{
+ const session=blankSession();
+ session.review.checks=session.review.checks.map((_,i)=>i%2===0);
+ const memory=new Map();
+ const storage={getItem:key=>memory.get(key)||null,setItem:(key,value)=>memory.set(key,value)};
+ assert.equal(saveSession(storage,session),true);
+ const restored=validateSession(JSON.parse(JSON.stringify(loadSession(storage).session)));
+ assert.deepEqual(restored.review.checks,session.review.checks);
+ const markdown=exportMarkdown(restored);
+ assert.equal(markdown.split('## Final checklist').length-1,1);
+ for(const [i,[label]] of checklist.entries())assert.ok(markdown.includes(`[${i%2===0?'x':' '}] ${label}:`));
+});
+
 test('Earlier decision and audience progress merges when importing backups or loading saved work',()=>{
  const cases=[
    [[],[]],

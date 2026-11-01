@@ -1,6 +1,6 @@
 # Anticipatory analysis field guide
 
-A buildless interactive guide and facilitation app for anticipatory humanitarian analysis. The four main destinations are Home, Learn the method, Your working session and Facilitate a workshop. All twelve lessons are grouped in Learn; five worksheets, the final checklist and downloads sit in the working session. An optional fictional Luma case and the complete source text support the guide. The case includes selectable observations, qualitative prioritisation, assumptions attached to causal links, an annotated briefing and a visible revision after review.
+A buildless interactive guide and facilitation app for anticipatory humanitarian analysis. The four main destinations are Home, Learn the method, Your working session and Facilitate a workshop. All twelve lessons are grouped in Learn; five worksheets and downloads sit in the working session. The final checklist appears once, at the end of Challenge and refine; Final checklist links jump directly to that section. An optional fictional Luma case and the complete source text support the guide. The case includes selectable observations, qualitative prioritisation, assumptions attached to causal links, an annotated briefing and a visible revision after review.
 
 ## Run locally
 

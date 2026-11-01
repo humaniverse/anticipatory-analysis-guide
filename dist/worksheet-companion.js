@@ -58,7 +58,7 @@ export function createWorksheetCompanion({getSession, editField}) {
   function selectTab(tab, focus = false, savePosition = true) {
     if (savePosition) remember();
     prefs().tab = tab;
-    panel.querySelector('#companion-title').textContent = tab === 'example' ? 'Fictional Luma example' : 'See your thinking take shape';
+    panel.querySelector('#companion-title').textContent = tab === 'example' ? 'Fictional example' : 'See your thinking take shape';
     for (const name of ['preview','example']) {
       const button = panel.querySelector(`#companion-tab-${name}`);
       button.setAttribute('aria-selected', String(name === tab));
@@ -134,7 +134,7 @@ export function createWorksheetCompanion({getSession, editField}) {
     panel = document.createElement('section');
     panel.className = 'worksheet-companion';
     panel.setAttribute('aria-label', 'Worksheet preview and example');
-    panel.innerHTML = `<div class="companion-heading"><span id="companion-title">See your thinking take shape</span><button type="button" data-companion="close">Hide panel</button></div><div class="companion-tabs" role="tablist" aria-label="Worksheet companion"><button type="button" id="companion-tab-preview" role="tab" aria-controls="companion-preview" data-companion="tab" data-tab="preview">Your preview</button><button type="button" id="companion-tab-example" role="tab" aria-controls="companion-example" data-companion="tab" data-tab="example">Luma example</button></div><div class="companion-content" id="companion-preview" role="tabpanel" tabindex="0" aria-labelledby="companion-tab-preview"></div><div class="companion-content" id="companion-example" role="tabpanel" tabindex="0" aria-labelledby="companion-tab-example">${renderCompanionExample(stage)}</div>`;
+    panel.innerHTML = `<div class="companion-heading"><span id="companion-title">See your thinking take shape</span><button type="button" data-companion="close">Hide panel</button></div><div class="companion-tabs" role="tablist" aria-label="Worksheet companion"><button type="button" id="companion-tab-preview" role="tab" aria-controls="companion-preview" data-companion="tab" data-tab="preview">Your preview</button><button type="button" id="companion-tab-example" role="tab" aria-controls="companion-example" data-companion="tab" data-tab="example">Example</button></div><div class="companion-content" id="companion-preview" role="tabpanel" tabindex="0" aria-labelledby="companion-tab-preview"></div><div class="companion-content" id="companion-example" role="tabpanel" tabindex="0" aria-labelledby="companion-tab-example">${renderCompanionExample(stage)}</div>`;
     host.append(panel);
     refresh();
     for (const node of content('preview').querySelectorAll('details[data-key]')) node.open = prefs().open.includes(node.dataset.key);

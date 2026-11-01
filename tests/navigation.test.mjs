@@ -46,6 +46,21 @@ test('Deep links identify the correct learning ancestry and focus target',()=>{
  for(const invalid of ['#lesson/missing','#tool/purpose','#tool/audience','#example/audience','#method/missing','#session/missing','#facilitate/missing','#source/99','#lesson/scan/extra','#lesson/audience/extra','#unknown'])assert.equal(routeContext(invalid).valid,false,invalid);
 });
 
+test('Final checklist shortcuts resolve to the review worksheet and its focus target',()=>{
+ const context=routeContext('#tool/review/checklist');
+ assert.equal(context.valid,true);
+ assert.equal(context.view,'tool');
+ assert.equal(context.id,'review');
+ assert.equal(context.anchor,'final-checklist');
+ assert.deepEqual(context.breadcrumbs.map(crumb=>crumb.label),['Your working session','Challenge and refine','Final checklist']);
+ assert.deepEqual(routeContext('#checklist'),context);
+ assert.ok(contextualLinks('session').some(item=>item.href===context.href&&item.label==='Final checklist'));
+ const results=searchNavigation('checklist');
+ assert.equal(results.filter(item=>item.href===context.href).length,1);
+ assert.equal(results.find(item=>item.href===context.href).path,'Your working session / Challenge and refine');
+ for(const hash of ['#tool/review/unknown','#tool/scan/checklist','#example/review/checklist','#tool/review/checklist/extra','#checklist/extra'])assert.equal(routeContext(hash).valid,false,hash);
+});
+
 test('Reading order joins foundations, the stages, facilitation and communication without dead ends',()=>{
  assert.equal(adjacentLessons('purpose').previous,null);
  assert.equal(adjacentLessons('purpose').next.id,'scan');
@@ -57,7 +72,7 @@ test('Reading order joins foundations, the stages, facilitation and communicatio
 });
 
 test('Search exposes lessons, working tools and examples with explicit section paths',()=>{
- assert.deepEqual(searchNavigation('').map(item=>item.href),['#method','#session','#facilitate','#checklist','#source']);
+ assert.deepEqual(searchNavigation('').map(item=>item.href),['#method','#session','#facilitate','#tool/review/checklist','#source']);
  assert.ok(searchNavigation('purpose').some(item=>item.href==='#lesson/purpose'&&item.path.startsWith('Learn the method / Before you begin')));
  for(const query of ['decision','audience']) {
    const results=searchNavigation(query);

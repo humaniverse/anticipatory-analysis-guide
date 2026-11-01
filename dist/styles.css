@@ -56,6 +56,7 @@ body[data-view=example] .page-heading h1{font-size:36px;max-width:850px;letter-s
 @media(max-width:360px){.sidebar{width:270px}.nav-open .menu-toggle{left:218px}.app-introduction h1{font-size:35px;letter-spacing:-1.1px}.stage-toolbar .mode-switch{gap:15px}.stage-toolbar .mode-switch a{font-size:11px}}
 /* Keep section links clear of the sticky header without an extra empty screen. */
 .learning-index-group,.download-panel,#workshop-agenda,.source-section{scroll-margin-top:20px}
+#final-checklist{scroll-margin-top:90px}
 
 /* Give the shared question its own row before the audience, decisions and scope. */
 .session-brief-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}

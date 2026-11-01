@@ -1,4 +1,4 @@
-import {briefFields, checklist, examples, stages} from './content.js';
+import {briefFields, examples, stages} from './content.js';
 import {levels} from './session.js';
 
 export const escapeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -50,7 +50,7 @@ export function previewModel(session, stage, activeId = '') {
     draft.push(field('write', 'briefing.conclusion', 'Conclusion', session.briefing.conclusion));
     if (stage === 'review') {
       sections.push(field('review', 'review.notes', 'Revision notes and unresolved questions', session.review.notes));
-      sections.push(group('review-checks', `${session.review.checks.filter(Boolean).length} of 12 reviewed`, checklist.map(([label], index) => field('review', `review.checks.${index}`, label, session.review.checks[index] ? 'Reviewed' : 'Not yet reviewed')), 'disclosure'));
+      sections.push({kind:'review-summary', key:'review-checks', title:`${session.review.checks.filter(Boolean).length} of 12 reviewed`});
     }
     sections.push(group('briefing', 'Your current briefing', draft, 'briefing'));
     const retained = trends.filter(t => !t.shortlist && session.briefing.trends[t.id]);
@@ -76,6 +76,7 @@ function editButton(stage, path, label) {
 function renderSection(section) {
   const {key, title, kind} = section;
   const safeKey = escapeText(key);
+  if (kind === 'review-summary') return `<section class="preview-group" data-key="${safeKey}"><h3>${escapeText(title)}</h3><p class="preview-note">Completion is not a quality score.</p></section>`;
   if (kind === 'field') {
     const empty = section.value === '' || section.value == null || (typeof section.value === 'string' && !section.value.trim());
     return `<section class="preview-field ${section.tone || ''}" data-key="${safeKey}"><div class="preview-field-heading"><h4>${escapeText(title)}</h4>${editButton(section.stage, section.path, title)}</div><p class="preview-value${empty ? ' preview-empty' : ''}">${empty ? 'Not recorded yet.' : escapeText(section.value)}</p></section>`;
@@ -84,7 +85,7 @@ function renderSection(section) {
     return `<section data-key="matrix" class="preview-matrix"><h3>${escapeText(title)}</h3><p class="preview-note">Qualitative judgements for discussion. Votes are entered manually; neither is a risk score.</p><div class="matrix-wrap"><div class="matrix-y-label">Humanitarian impact ↑</div><div class="matrix-grid">${[...levels].reverse().map(impact => levels.map(likelihood => `<div class="matrix-cell${impact === 'High' && likelihood === 'High' ? ' matrix-high' : ''}" data-key="cell-${impact}-${likelihood}"><span class="cell-label">${impact} impact<br>${likelihood.toLowerCase()} likelihood</span>${section.trends.filter(t => t.impact === impact && t.likelihood === likelihood).map(t => `<button type="button" class="matrix-trend" data-key="${escapeText(t.id)}" data-companion="edit" data-stage="prioritise" data-path="trend.${escapeText(t.id)}.proposition" aria-label="Edit assessment: ${escapeText(t.title)}">${escapeText(t.title)}</button>`).join('')}</div>`).join('')).join('')}</div><div class="matrix-x-label">Likelihood →</div></div></section>`;
   }
   const content = section.children.map(renderSection).join('') || `<p class="preview-empty">${section.emptyMessage || (key === 'shortlist' ? 'Select trends in the worksheet to bring them into the story.' : key === 'watch-list' ? 'No trends on the watch list yet.' : 'Every trend has both assessment labels.')}</p>`;
-  if (kind === 'disclosure') return `<details class="preview-disclosure" data-key="${safeKey}"><summary>${escapeText(title)}</summary>${key === 'review-checks' ? '<p class="preview-note">Reviewed means considered, not a guarantee of analytical quality.</p>' : ''}${content}</details>`;
+  if (kind === 'disclosure') return `<details class="preview-disclosure" data-key="${safeKey}"><summary>${escapeText(title)}</summary>${content}</details>`;
   return `<section class="preview-group preview-${kind}" data-key="${safeKey}"><h3>${escapeText(title)}</h3>${kind === 'pathway' ? '<p class="preview-note">Proposed connections, not proof of causality.</p>' : ''}${content}</section>`;
 }
 
@@ -119,5 +120,5 @@ export function exampleEntries(stage) {
   return [{key:'overview', title:source.title, excerpt:source.body, note:'Follow the reasoning, then apply the structure to your own question.'}, ...source.points.map(([title, excerpt], index) => ({key:String(index), title, excerpt, note:notes[stage][index]}))];
 }
 export function renderCompanionExample(stage) {
-  return `<p class="companion-fiction"><strong>Fictional Luma example</strong>All places, sources and assessments below are invented. They stay separate from your work.</p>${exampleEntries(stage).map(entry => `<section class="companion-example" id="companion-example-${stage}-${entry.key}" tabindex="-1"><h3>${escapeText(entry.title)}</h3><blockquote>${escapeText(entry.excerpt)}</blockquote><p class="example-reason"><span>Why this helps</span>${escapeText(entry.note)}</p></section>`).join('')}<a class="text-link" href="#example/${stage}">Read the complete worked example</a>`;
+  return `<p class="companion-fiction"><strong>Fictional example</strong>All places, sources and assessments below are invented. They stay separate from your work.</p>${exampleEntries(stage).map(entry => `<section class="companion-example" id="companion-example-${stage}-${entry.key}" tabindex="-1"><h3>${escapeText(entry.title)}</h3><blockquote>${escapeText(entry.excerpt)}</blockquote><p class="example-reason"><span>Why this helps</span>${escapeText(entry.note)}</p></section>`).join('')}<a class="text-link" href="#example/${stage}">Read the complete worked example</a>`;
 }

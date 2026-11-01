@@ -87,7 +87,10 @@ test('Briefings preserve retained drafts separately and review links edit the or
     if (stage==='review') {
       assert.ok(html.includes('1 of 12 reviewed'));
       assert.ok(html.includes('Narrow the geographic claim'));
-      assert.equal(targets.filter(t=>t.path.startsWith('review.checks.')).length, 12);
+      assert.equal(targets.filter(t=>t.path.startsWith('review.checks.')).length, 0);
+      assert.equal(model.sections.find(s=>s.key==='review-checks').children, undefined);
+      assert.ok(!html.includes('Not yet reviewed'));
+      assert.ok(html.includes('Completion is not a quality score.'));
     }
   }
 });

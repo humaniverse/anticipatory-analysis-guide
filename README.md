@@ -1,12 +1,20 @@
 # Anticipatory analysis field guide
 
-A buildless interactive guide and facilitation app for anticipatory humanitarian analysis. The four main destinations are Home, Learn the method, Your working session and Facilitate a workshop. All twelve lessons are grouped in Learn; five worksheets and downloads sit in the working session. The final checklist appears once, at the end of Challenge and refine; Final checklist links jump directly to that section. An optional fictional Luma case and the complete source text support the guide. The case includes selectable observations, qualitative prioritisation, assumptions attached to causal links, an annotated briefing and a visible revision after review.
+An interactive guide and facilitation app for anticipatory humanitarian analysis.
+
+The app contains three main sections, alongside a homepage:
+
+- **Learn the method**, containing 12 lessons for conducting and facilitating anticipatory analysis.
+- **Your working session:** a place to work on an anticipatory analysis from start to finish (which can be saved and downloaded), as well as a fictional example.
+- **Facilitate a workshop**, which gives users everything they need to run a collaborative analytical workshop themselves.
+
+This guide is based on a method developed by Madeleine Lyons and Barbara Devlieger.
 
 ## Run locally
 
 Run `node scripts/serve.mjs` from this directory and open the printed local URL. No installation or build step is needed. Production assets are in `dist/`.
 
-## Edit
+## App structure
 
 - `dist/navigation.js`: shared learning groups, route ownership, breadcrumbs, reading order and search entries.
 - `dist/atlas.js`: fictional map, evidence explorer, five case exhibits and connected stage illustrations.
@@ -17,13 +25,15 @@ Run `node scripts/serve.mjs` from this directory and open the printed local URL.
 - `dist/worksheet-companion.js`: responsive preview/example panel, focus management and transient display preferences.
 - `dist/interactions.js`: reduced-motion-aware feedback and transient stage reading positions and disclosures.
 
-`dist/full-guide.json` contains the original document body and hyperlinks, excluding Word comments. Regenerate from the source DOCX with `scripts/extract-guide.ps1 -InputDocument <absolute-path>` while this directory is the working directory. Review adaptations if the source changes.
+`dist/full-guide.json` contains the original full guidance for anticipatory analyses. It's based on a Word document I wrote; regenerate it from the source DOCX with `scripts/extract-guide.ps1 -InputDocument <absolute-path>` while this directory is the working directory. The original document is not bundled.
 
 ## Data and hosting
 
-One working session is stored in the visitor's browser. JSON backups restore the session; Markdown and print export readable worksheets. Nothing in the toolkit uploads workshop notes, and there is no server, analytics, collaboration service or AI integration. Reading progress, agenda settings, causal assumptions and alternative interpretations are part of the backup. Existing version-one backups remain compatible; the new narrative fields default to empty when absent.
+This is a buildless app. There is no server, analytics, collaboration service or AI integration.
 
-This checkout has no hosting identity attached. The original document is not bundled; its extracted body text is included. Commissioner and Literata are hosted locally in `dist/fonts/`, with their Open Font Licenses. The visual direction is recorded in `DESIGN.md`.
+The site uses relative asset paths and hash-based navigation. Session data is stored per browser origin; changing the site's domain does not transfer existing sessions, so export a JSON backup before moving if needed. One working session is stored in the visitor's browser. Users can export JSON backups and later restore their session, as well as export or print their analyses in Markdown.
+
+Commissioner and Literata font are hosted locally in `dist/fonts/`, with their Open Font Licenses. The visual direction is recorded in `DESIGN.md`.
 
 ## Verification
 

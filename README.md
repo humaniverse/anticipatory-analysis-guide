@@ -15,6 +15,7 @@ Run `node scripts/serve.mjs` from this directory and open the printed local URL.
 - `dist/session.js`: versioned session model, import validation, browser storage and exports.
 - `dist/work-preview.js`: pure worksheet previews, edit targets and contextual fictional excerpts.
 - `dist/worksheet-companion.js`: responsive preview/example panel, focus management and transient display preferences.
+- `dist/interactions.js`: reduced-motion-aware feedback and transient stage reading positions and disclosures.
 
 `dist/full-guide.json` contains the original document body and hyperlinks, excluding Word comments. Regenerate from the source DOCX with `scripts/extract-guide.ps1 -InputDocument <absolute-path>` while this directory is the working directory. Review adaptations if the source changes.
 
@@ -33,3 +34,5 @@ Preview tests also cover all five stages, partial assessments, retained drafts, 
 In the Prioritise preview, select a trend and click a cell, or drag a placed or unplaced trend into the matrix. Keyboard users can select a trend and activate a cell with Enter or Space. Browser QA should check mouse and touch placement, occupied cells, same-cell drops, cancellation, edge scrolling, selection/focus retention and category persistence after reload.
 
 Fictional examples remain separate from user sessions. Qualitative labels and votes support discussion; the site does not compute risk scores or select priorities automatically.
+
+Stage views remember their scroll position and open sections during the current visit. Explicit checklist links and companion Edit links take precedence over remembered positions. Switching views uses a short content fade; adding a trend settles only its new editor without rebuilding existing inputs. In the narrative example, opening a connection shows its assumption and dated evidence, including coverage limits and the gap between livelihood observations and food-access consequences. Check these interactions with keyboard input and reduced motion, including changing the preference during an effect.

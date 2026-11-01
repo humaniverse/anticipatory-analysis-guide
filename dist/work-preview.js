@@ -18,7 +18,7 @@ export function previewModel(session, stage, activeId = '') {
     sections.push(group('trend-card', 'Your trend card', [
       trendField('title', 'Trend'), trendField('category', 'STEEP category'), trendField('direction', 'Direction'),
       trendField('evidence', 'Evidence and source dates', 'evidence'),
-      trendField('uncertainty', 'Uncertainty', 'assumption'), trendField('outlook', 'Outlook', 'interpretation')
+      trendField('uncertainty', 'Uncertainty'), trendField('outlook', 'Outlook', 'interpretation')
     ]));
   }
   if (stage === 'prioritise') {
@@ -47,7 +47,7 @@ export function previewModel(session, stage, activeId = '') {
   }
   if (stage === 'write' || stage === 'review') {
     const draft = [field('write', 'briefing.intro', 'Introduction', session.briefing.intro)];
-    const trendDraft = t => group(`brief-${t.id}`, t.title, briefFields.map(([key, label]) => field('write', `brief.${t.id}.${key}`, label, session.briefing.trends[t.id]?.[key] || '', key === 'evidence' ? 'evidence' : key === 'uncertainties' ? 'assumption' : '')));
+    const trendDraft = t => group(`brief-${t.id}`, t.title, briefFields.map(([key, label]) => field('write', `brief.${t.id}.${key}`, label, session.briefing.trends[t.id]?.[key] || '', key === 'evidence' ? 'evidence' : ['summary','consequences'].includes(key) ? 'interpretation' : '')));
     draft.push(...trends.filter(t => t.shortlist).map(trendDraft));
     draft.push(field('write', 'briefing.conclusion', 'Conclusion', session.briefing.conclusion));
     if (stage === 'review') {
@@ -85,7 +85,7 @@ function renderSection(section) {
   if (kind === 'review-summary') return `<section class="preview-group" data-key="${safeKey}"><h3>${escapeText(title)}</h3><p class="preview-note">Completion is not a quality score.</p></section>`;
   if (kind === 'field') {
     const empty = section.value === '' || section.value == null || (typeof section.value === 'string' && !section.value.trim());
-    return `<section class="preview-field ${section.tone || ''}" data-key="${safeKey}"><div class="preview-field-heading"><h4>${escapeText(title)}</h4>${editButton(section.stage, section.path, title)}</div><p class="preview-value${empty ? ' preview-empty' : ''}">${empty ? 'Not recorded yet.' : escapeText(section.value)}</p></section>`;
+    return `<section class="preview-field ${section.tone || ''}" data-key="${safeKey}"><div class="preview-field-heading"><h4>${escapeText(section.tone && !title.toLowerCase().startsWith(section.tone) ? `${section.tone[0].toUpperCase()+section.tone.slice(1)}: ${title}` : title)}</h4>${editButton(section.stage, section.path, title)}</div><p class="preview-value${empty ? ' preview-empty' : ''}">${empty ? 'Not recorded yet.' : escapeText(section.value)}</p></section>`;
   }
   if (kind === 'matrix') {
     const active = section.trends.find(t => t.id === section.activeId);

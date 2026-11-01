@@ -111,15 +111,15 @@ const utilityEntries=[
   {href:'#source',title:'The source guide',description:'Read the complete original guide and its references.',terms:'original reference sources'}
 ];
 
-export function searchNavigation(query,sourceSections=[]) {
+// Build once for a loaded guide; keystrokes only filter the prepared text.
+export function createNavigationSearch(sourceSections=[]) {
   const decorate=entry=>{
     const context=routeContext(entry.href,sourceSections);
     const parents=context.breadcrumbs.slice(0,-1).map(crumb=>crumb.label);
     const path=parents.length?parents.join(' / '):mainDestinations.find(item=>item.id===context.section)?.label||'The source guide';
     return {...entry,path};
   };
-  const q=query.trim().toLowerCase();
-  if(!q)return [
+  const suggestions=[
     {href:'#method',title:'Learn the method',description:`Find all ${lessons.length} lessons, grouped by topic.`},
     ...['#session','#facilitate','#tool/review/checklist','#source'].map(href=>utilityEntries.find(entry=>entry.href===href))
   ].map(decorate);
@@ -130,5 +130,13 @@ export function searchNavigation(query,sourceSections=[]) {
     ...utilityEntries,
     ...sourceSections.map(section=>({href:`#source/${section.id}`,title:section.title,description:'From the complete source guide.',terms:section.text}))
   ].map(decorate);
-  return entries.filter(entry=>[entry.title,entry.description,entry.path,entry.terms].join(' ').toLowerCase().includes(q));
+  const searchable=entries.map(entry=>({entry,text:[entry.title,entry.description,entry.path,entry.terms].join(' ').toLowerCase()}));
+  return query=>{
+    const q=query.trim().toLowerCase();
+    return q?searchable.filter(item=>item.text.includes(q)).map(item=>item.entry):suggestions;
+  };
+}
+
+export function searchNavigation(query,sourceSections=[]) {
+  return createNavigationSearch(sourceSections)(query);
 }

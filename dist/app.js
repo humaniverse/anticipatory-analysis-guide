@@ -1,13 +1,12 @@
-import {mainDestinations,learningGroups,groupForLesson,lessonById,adjacentLessons,routeContext,contextualLinks,hasAnalyticalWork,searchNavigation} from './navigation.js';
+import {mainDestinations,learningGroups,groupForLesson,lessonById,adjacentLessons,routeContext,contextualLinks,hasAnalyticalWork,createNavigationSearch} from './navigation.js';
 import {observationExplorer,routeIllustration,stageGlyph,methodThread,caseStage} from './atlas.js';
 import {createWorksheetCompanion} from './worksheet-companion.js';
 import {createMotion,createStageViewMemory} from './interactions.js';
-import {fieldId,exampleKeyForField} from './work-preview.js';
+import {escapeText as esc,fieldId,exampleKeyForField} from './work-preview.js';
 import {stages,lessons,checklist,redTeam,briefFields,categories,directions,examples,prioritisationDefinitions} from './content.js';
 import {blankSession,newTrend,emptyBrief,validateSession,loadSession,saveSession,worksheetSections,exportMarkdown,levels,STORAGE_KEY} from './session.js';
 
 const $=(s,root=document)=>root.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let storage; try{storage=window.localStorage;}catch{storage={getItem(){throw Error();},setItem(){throw Error();}};}
 const loaded=loadSession(storage);
 let session=loaded.session, saveAvailable=loaded.available, source=null, sourceError=false, promptIndex=0, activeFacilitator=0, confirmAction=null;
@@ -35,7 +34,7 @@ const companion=createWorksheetCompanion({getSession:()=>session,editField:(stag
   return true;
 }});
 function focusWorksheetField(path){
- const target=[...document.querySelectorAll('.worksheet-editor [data-field]')].find(el=>el.dataset.field===path);
+ const target=document.getElementById(fieldId(path));
  if(!target)return;
  for(let parent=target.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
  target.focus({preventScroll:true});motion.scrollIntoView(target,{block:'center'});
@@ -43,10 +42,9 @@ function focusWorksheetField(path){
 const openLearningGroups=new Set(['before-you-begin']);
 const learningGroupChoices=new Map();
 let lastNavigationHash=null;
-const sourceReady=fetch('./full-guide.json').then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{source=data;}).catch(()=>{sourceError=true;});
-const arrow='<span aria-hidden="true">↗</span>';
+let navigationSearch=createNavigationSearch();
+const sourceReady=fetch('./full-guide.json').then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{source=data;navigationSearch=createNavigationSearch(source.sections);}).catch(()=>{sourceError=true;});
 function route(){return (location.hash.slice(1)||'home').split('/');}
-function routeHref(kind,id){return '#'+kind+(id?'/'+id:'');}
 function link(href,label,cls=''){return `<a class="${cls}" href="${href}">${label}</a>`;}
 function sourceLink(n){const sections=Array.isArray(n)?n:[n];return sections.map(id=>`<a class="source-link" href="#source/${id}">${sections.length>1?`Full guide: section ${id}`:'Read about this in the full guide'}</a>`).join(' · ');}
 function eyebrow(text){return `<p class="eyebrow">${text}</p>`;}
@@ -82,14 +80,15 @@ function renderSidebar(context=routeContext(location.hash,source?.sections)){
 $('#sidebar').addEventListener('toggle',e=>{const group=e.target.dataset?.learningGroup;if(!group||!e.target.isConnected||e.target.open===openLearningGroups.has(group))return;learningGroupChoices.set(group,e.target.open);if(e.target.open)openLearningGroups.add(group);else openLearningGroups.delete(group);},true);
 function save(){saveAvailable=saveSession(storage,session); updateSaveStatus(); updateProgress();}
 function updateSaveStatus(){
-  $('#save-status').textContent=saveAvailable?'Saved on this device':'Download to keep your work';
-  $('#save-status').classList.toggle('warning',!saveAvailable);
-  $('#save-status').title=saveAvailable?'Your working session is saved in this browser. It does not sync across devices.':'Browser saving is unavailable. Download a backup before leaving.';
+  const status=$('#save-status');
+  status.textContent=saveAvailable?'Saved on this device':'Download to keep your work';
+  status.classList.toggle('warning',!saveAvailable);
+  status.title=saveAvailable?'Your working session is saved in this browser. It does not sync across devices.':'Browser saving is unavailable. Download a backup before leaving.';
   const notice=$('#storage-notice');
   if(notice)notice.hidden=saveAvailable;
 }
-function updateProgress(){if($('#reading-count'))$('#reading-count').textContent=`${session.lessonDone.length} of ${lessons.length} lessons explored`;if($('#reading-bar'))$('#reading-bar').style.width=session.lessonDone.length/lessons.length*100+'%';}
-function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('#toast').classList.remove('show'),4800);}
+function updateProgress(){const count=$('#reading-count'),bar=$('#reading-bar');if(count)count.textContent=`${session.lessonDone.length} of ${lessons.length} lessons explored`;if(bar)bar.style.width=session.lessonDone.length/lessons.length*100+'%';}
+function toast(message){const notice=$('#toast');notice.textContent=message;notice.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>notice.classList.remove('show'),4800);}
 function confirm(title,copy,label,action){$('#confirm-title').textContent=title;$('#confirm-copy').textContent=copy;$('#confirm-accept').textContent=label;confirmAction=action;$('#confirm-dialog').showModal();$('#confirm-cancel').focus();}
 function renderHome(){
  const continuing=hasAnalyticalWork(session);
@@ -191,7 +190,7 @@ function download(filename,text,type){const url=URL.createObjectURL(new Blob([te
 function preparePrint(){$('#print-root').innerHTML=printContents();}
 function formatTime(seconds){return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;}
 function resetTimer(){timer.running=false;timer.seconds=session.agenda[activeFacilitator].minutes*60;timer.end=0;updateTimer();}
-function updateTimer(){if($('#timer-display')){$('#timer-display').textContent=formatTime(timer.seconds);$('#timer-state').textContent=timer.seconds===0?'Time is up':timer.running?'Running':'Paused / ready';$('#timer-toggle').textContent=timer.running?'Pause':'Start timer';}}
+function updateTimer(){const display=$('#timer-display');if(display){display.textContent=formatTime(timer.seconds);$('#timer-state').textContent=timer.seconds===0?'Time is up':timer.running?'Running':'Paused / ready';$('#timer-toggle').textContent=timer.running?'Pause':'Start timer';}}
 setInterval(()=>{if(timer.running){timer.seconds=Math.max(0,Math.ceil((timer.end-Date.now())/1000));if(timer.seconds===0){timer.running=false;toast('Time for this stage is up. Continue or take a pause as needed.');}updateTimer();}},250);
 
 main.addEventListener('toggle',event=>{
@@ -246,7 +245,7 @@ $('.skip').addEventListener('click',e=>{e.preventDefault();main.focus({preventSc
 $('#menu-toggle').addEventListener('click',()=>{const open=document.body.classList.toggle('nav-open');$('#menu-toggle').setAttribute('aria-expanded',String(open));$('#menu-toggle').setAttribute('aria-label',open?'Close navigation':'Open navigation');updateSidebarAccess();if(open){const current=$('#sidebar .context-link[aria-current="page"]')||$('#sidebar .nav-item.active')||$('#sidebar a');current.focus();motion.scrollIntoView(current,{block:'nearest'});}});
 document.addEventListener('click',e=>{if(document.body.classList.contains('nav-open')&&!e.target.closest('#sidebar,#menu-toggle')){document.body.classList.remove('nav-open');$('#menu-toggle').setAttribute('aria-expanded','false');$('#menu-toggle').setAttribute('aria-label','Open navigation');updateSidebarAccess();}});
 function searchResults(query){
- const results=searchNavigation(query,source?.sections||[]);
+ const results=navigationSearch(query);
  return `<p class="search-count">${query.trim()?results.length+' result'+(results.length===1?'':'s'):'Common destinations'}</p>${results.length?results.map(result=>`<a href="${result.href}" class="search-result">${result.path!==result.title?`<span class="search-path">${esc(result.path)}</span>`:''}<strong>${esc(result.title)}</strong><p>${esc(result.description)}</p></a>`).join(''):'<div class="empty-search"><h3>No matching pages yet.</h3><p>Try a broader term such as evidence, audience or uncertainty.</p></div>'}`;
 }
 async function openSearch(){$('#search-dialog').showModal();$('#search-input').value='';$('#search-results').innerHTML=searchResults('');$('#search-input').focus();await sourceReady;if($('#search-dialog').open)$('#search-results').innerHTML=searchResults($('#search-input').value);}

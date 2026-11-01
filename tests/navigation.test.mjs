@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {lessons,stages} from '../dist/content.js';
 import {blankSession,newTrend} from '../dist/session.js';
-import {mainDestinations,learningGroups,readingOrder,groupForLesson,adjacentLessons,routeContext,contextualLinks,hasAnalyticalWork,searchNavigation} from '../dist/navigation.js';
+import {mainDestinations,learningGroups,readingOrder,groupForLesson,adjacentLessons,routeContext,contextualLinks,hasAnalyticalWork,createNavigationSearch,searchNavigation} from '../dist/navigation.js';
 
 test('The complete lesson collection is discoverable exactly once in the four learning groups',()=>{
  assert.equal(learningGroups.length,4);
@@ -88,6 +88,19 @@ test('Search exposes lessons, working tools and examples with explicit section p
  assert.ok(!communication.some(item=>item.href==='#communicate'));
  assert.ok(searchNavigation('communication').some(item=>item.href==='#method/communicate-and-continue'));
  assert.deepEqual(searchNavigation('unmatchable-zxqv-12345'),[]);
+});
+
+test('A prepared search supports repeated queries and separately loaded source guides',()=>{
+ const search=createNavigationSearch([{id:1,title:'Local observations',text:'Distinctive-field-evidence'}]);
+ assert.deepEqual(search('  DISTINCTIVE-FIELD-EVIDENCE  ').map(item=>item.href),['#source/1']);
+ assert.equal(search('distinctive-field-evidence')[0].path,'The source guide');
+ assert.deepEqual(search('unmatchable-zxqv-12345'),[]);
+ assert.deepEqual(search('   ').map(item=>item.href),['#method','#session','#facilitate','#tool/review/checklist','#source']);
+ assert.ok(search('audience').some(item=>item.href==='#lesson/purpose'));
+ const replacement=createNavigationSearch([{id:2,title:'Replacement source',text:'Different-source-evidence'}]);
+ assert.deepEqual(replacement('distinctive-field-evidence'),[]);
+ assert.deepEqual(replacement('different-source-evidence').map(item=>item.href),['#source/2']);
+ assert.deepEqual(search('distinctive-field-evidence').map(item=>item.href),['#source/1']);
 });
 
 test('A resume action represents analytical work, while reading progress and agenda-only edits do not',()=>{

@@ -23,11 +23,15 @@ export function previewModel(session, stage, activeId = '') {
   }
   if (stage === 'prioritise') {
     sections.push({kind:'matrix', key:'matrix', title:'Prioritisation matrix', trends, activeId:active?.id || '', activeTitle:active?.title || ''});
-    const trendList = (key, title, items, target) => ({...group(key, title, items.map(t => field(stage, `trend.${t.id}.${target}`, t.title, target === 'watch' ? 'On the watch list' : 'Choose both likelihood and impact.'))), emptyMessage:key === 'unassessed' && !trends.length ? 'Add a trend in Scan to begin comparing possibilities.' : ''});
-    const unassessed = trendList('unassessed', 'Not yet placed', trends.filter(t => !t.likelihood || !t.impact), 'likelihood');
-    unassessed.children = unassessed.children.map(item => ({...item, kind:'unplaced-trend', trend:trends.find(t => item.path === `trend.${t.id}.likelihood`), activeId:active?.id || ''}));
+    const unassessed = {
+      ...group('unassessed', 'Not yet placed', trends.filter(t => !t.likelihood || !t.impact).map(t => ({
+        ...field(stage, `trend.${t.id}.likelihood`, t.title, 'Choose both likelihood and impact.'),
+        kind:'unplaced-trend', trend:t, activeId:active?.id || ''
+      }))),
+      emptyMessage:!trends.length ? 'Add a trend in Scan to begin comparing possibilities.' : ''
+    };
     sections.push(unassessed);
-    sections.push(trendList('watch-list', 'Watch list', trends.filter(t => t.watch), 'watch'));
+    sections.push({...group('watch-list', 'Watch list', trends.filter(t => t.watch).map(t => field(stage, `trend.${t.id}.watch`, t.title, 'On the watch list'))), emptyMessage:''});
     if (active) sections.push(group('assessment', active.title, [
       trendField('proposition', 'Proposition and time horizon'), trendField('likelihood', 'Likelihood'),
       trendField('impact', 'Humanitarian impact'), trendField('rationale', 'Reasoning and affected people'),

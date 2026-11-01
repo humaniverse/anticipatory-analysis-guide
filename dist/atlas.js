@@ -38,8 +38,7 @@ export function observationExplorer(selected=0) {
   </div>`;
 }
 
-export function routeIllustration(id) {
-  const sketches={
+const routeSketches={
     guide:`<path fill="#eef3f8" stroke="none" d="M11 38C16 16 46 12 75 20s40 27 32 48-34 22-62 17S4 63 11 38Z"/>
       <path fill="white" d="m13 30-1 46c16-3 31 0 47 9 16-8 32-11 49-8l-1-46c-17-4-33 0-48 9-14-9-30-12-46-10Z"/>
       <path d="M16 26c16-2 30 2 43 11 14-9 29-12 45-10l-1 45c-16-2-31 2-44 11-14-9-28-13-44-11Z" fill="white"/>
@@ -141,19 +140,20 @@ export function routeIllustration(id) {
       <path d="m12 45 95 1-9 40-79-1Z" fill="white"/>
       <path d="m60 53-1 20m-7-8 7 8 8-8M47 78h24" stroke="#2862b3" stroke-width="1.8"/>`
   };
-  return `<svg class="route-illustration" viewBox="0 0 120 100" width="120" height="100" aria-hidden="true" focusable="false" fill="none" stroke="#172d43" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${sketches[id]||''}</svg>`;
+export function routeIllustration(id) {
+  return `<svg class="route-illustration" viewBox="0 0 120 100" width="120" height="100" aria-hidden="true" focusable="false" fill="none" stroke="#172d43" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${routeSketches[id]||''}</svg>`;
 }
 
-export function stageGlyph(id) {
-  const dot=(x,y,r=3,tone='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="white" ${tone?`class="glyph-${tone}"`:''}/>`;
-  const paths={
+const dot=(x,y,r=3,tone='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="white" ${tone?`class="glyph-${tone}"`:''}/>`;
+const stagePaths={
     scan:`<path class="glyph-guide" d="M6 47h48"/>${dot(12,38)}${dot(22,18)}${dot(31,32)}${dot(45,13)}${dot(49,41,2,'ochre')}${dot(10,11,2)}`,
     prioritise:`<path class="glyph-guide" d="M6 47h48"/><path class="glyph-cluster" d="M9 35C8 20 22 9 33 16s10 23-3 27S10 43 9 35Z"/>${dot(13,35)}${dot(24,21)}${dot(34,32)}${dot(48,13,2)}${dot(49,41,2,'ochre')}`,
     narrative:`<path d="M13 39 29 20 47 34"/><path class="glyph-assumption" d="m29 20 18-9"/>${dot(13,39)}${dot(29,20)}${dot(47,34)}${dot(47,11,2,'ochre')}`,
     write:`<path class="glyph-guide" d="M10 7h40v46H10z"/><path d="M18 18h24M18 29h24M18 40h17"/>${dot(18,18)}${dot(18,29)}${dot(18,40)}<path class="glyph-assumption" d="M39 40h4"/>`,
     review:`<path class="glyph-guide" d="M10 7h37v46H10z"/><path d="M18 18h21M18 29h21M18 40h14"/>${dot(18,18)}${dot(18,29)}${dot(18,40)}<path class="glyph-annotation" d="M40 29h14M40 33h10M35 40h5l7 7"/>${dot(50,49,3,'plum')}`
   };
-  return `<svg class="stage-glyph" viewBox="0 0 60 60" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths[id]||paths.scan}</svg>`;
+export function stageGlyph(id) {
+  return `<svg class="stage-glyph" viewBox="0 0 60 60" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${stagePaths[id]||stagePaths.scan}</svg>`;
 }
 
 export function methodThread(){

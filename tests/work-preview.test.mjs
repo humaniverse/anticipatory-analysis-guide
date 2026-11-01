@@ -53,11 +53,45 @@ test('Only fully assessed trends enter the qualitative matrix; watch lists inclu
   assert.ok(!empty.includes('Every trend has both'));
   const model = previewModel(fixture(), 'prioritise', 'market');
   const html = renderPreview(model);
-  assert.equal((html.match(/class="matrix-trend"/g) || []).length, 1);
-  assert.ok(html.includes('Edit assessment: Changing rainfall'));
+  assert.equal((html.match(/class="matrix-trend"/g) || []).length, 3);
+  assert.ok(html.includes('Select trend: Changing rainfall'));
   assert.deepEqual(model.sections.find(s=>s.key==='unassessed').children.map(s=>s.title), ['Market access','Retained idea']);
   assert.deepEqual(model.sections.find(s=>s.key==='watch-list').children.map(s=>s.title), ['Market access']);
   assert.equal(model.sections.find(s=>s.key==='assessment').children.find(s=>s.path.endsWith('.votes')).value, 0);
+});
+
+test('Matrix cells expose all category pairs and selection without nested controls', () => {
+  const session = fixture();
+  const model = previewModel(session, 'prioritise', 'rain');
+  const html = renderPreview(model);
+  assert.equal(model.sections[0].activeId, 'rain');
+  assert.equal((html.match(/class="matrix-place"/g) || []).length, 9);
+  for (const impact of ['Low','Medium','High']) for (const likelihood of ['Low','Medium','High']) {
+    assert.ok(html.includes(`data-impact="${impact}" data-likelihood="${likelihood}"`));
+    assert.ok(html.includes(`Place Changing rainfall: ${likelihood.toLowerCase()} likelihood, ${impact.toLowerCase()} impact`));
+  }
+  assert.ok(html.includes('matrix-selected'));
+  assert.ok(html.includes('data-trend-id="rain" aria-pressed="true"'));
+  assert.ok(html.includes('data-trend-id="market" aria-pressed="false"'));
+  assert.ok(!/<button\b[^>]*>(?:(?!<\/button>)[\s\S])*<button\b/.test(html));
+  assert.ok(html.indexOf('data-impact="High" data-likelihood="Low"') < html.indexOf('data-impact="Low" data-likelihood="Low"'));
+  assert.ok(html.includes('id="matrix-instructions"'));
+});
+
+test('Unplaced trends can be selected and dragged while retaining assessment edit links', () => {
+  const model = previewModel(fixture(), 'prioritise', 'market');
+  const unplaced = model.sections.find(s => s.key === 'unassessed');
+  assert.ok(unplaced.children.every(item => item.kind === 'unplaced-trend' && item.trend.id));
+  const html = renderPreview(model);
+  assert.ok(html.includes('data-trend-id="market" aria-pressed="true"'));
+  assert.ok(html.includes('data-companion="edit" data-stage="prioritise" data-path="trend.market.likelihood"'));
+  assert.equal((renderPreview(previewModel(blankSession(), 'prioritise')).match(/aria-describedby="matrix-instructions" disabled/g) || []).length, 9);
+  const session = fixture();
+  session.trends[0].title = '<img src=x onerror="bad()">';
+  const escaped = renderPreview(previewModel(session, 'prioritise'));
+  assert.ok(!escaped.includes('<img'));
+  assert.ok(escaped.includes('Select trend: &lt;img'));
+  assert.ok(escaped.includes('Place &lt;img'));
 });
 
 test('Causal previews preserve assumptions, alternatives, shortlist and narrative', () => {
@@ -125,7 +159,7 @@ test('Every generated edit target corresponds to a worksheet field, and every ex
       assert.ok(fieldId(path).startsWith('f-'));
     }
     assert.equal(new Set(entries.map(e=>e.key)).size, entries.length);
-    assert.ok(renderCompanionExample(id).includes('Fictional Luma example'));
+    assert.ok(renderCompanionExample(id).includes('Fictional example'));
   }
   assert.ok(!exportMarkdown(session).includes('Luma'));
   assert.throws(()=>previewModel(session,'missing'));

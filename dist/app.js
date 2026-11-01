@@ -17,6 +17,17 @@ const companion=createWorksheetCompanion({getSession:()=>session,editField:(stag
   const href='#tool/'+stage;
   if(location.hash===href)focusWorksheetField(path);
   else {pendingEdit={stage,path};location.hash=href;}
+},categoriseTrend:(id,likelihood,impact)=>{
+  const trend=session.trends.find(t=>t.id===id);
+  if(!trend||!levels.includes(likelihood)||!levels.includes(impact))return false;
+  const changed=trend.likelihood!==likelihood||trend.impact!==impact;
+  Object.assign(trend,{likelihood,impact});
+  for(const [key,value] of Object.entries({likelihood,impact})){
+    const select=document.getElementById(fieldId(`trend.${id}.${key}`));
+    if(select)select.value=value;
+  }
+  if(changed)save();
+  return true;
 }});
 function focusWorksheetField(path){
  const target=[...document.querySelectorAll('.worksheet-editor [data-field]')].find(el=>el.dataset.field===path);

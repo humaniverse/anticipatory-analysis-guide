@@ -83,3 +83,20 @@ body[data-view=example] .page-heading h1{font-size:36px;max-width:850px;letter-s
 .companion-fiction{font-size:12px;line-height:1.75;background:var(--soft);border-left:2px solid var(--blue);padding:13px 14px;margin-bottom:25px}.companion-fiction strong{display:block;color:var(--ink);font-weight:500;margin-bottom:5px}.companion-example{margin:0 0 26px;padding-bottom:24px;border-bottom:1px solid var(--line);scroll-margin-top:20px}.companion-example:focus{outline:2px solid var(--blue);outline-offset:7px;border-radius:2px}.companion-example h3{font-size:20px;line-height:1.4;margin-bottom:13px}.companion-example blockquote{font:15px/1.85 var(--serif);margin:0 0 17px;white-space:pre-wrap}.example-reason{font-size:13px;line-height:1.75;color:var(--muted);padding-left:13px;border-left:2px solid var(--ochre);margin:0}.example-reason>span{display:block;font-size:12px;font-weight:500;color:var(--ochre-text);margin-bottom:4px}
 @media(max-width:1279px){.worksheet-workspace{grid-template-columns:minmax(0,1fr)}.companion-launcher{position:sticky;top:65px;z-index:20;box-shadow:0 7px 12px #ffffffeb}.companion-dialog .companion-content{padding-inline:max(24px,calc((100vw - 700px)/2))}}
 @media(max-width:600px){.stage-heading{gap:12px}.stage-heading>.stage-glyph,body[data-view=tool] .stage-heading>.stage-glyph{width:43px;height:43px;padding:3px;margin-top:4px}.stage-heading .page-heading h1{font-size:30px;letter-spacing:-.8px}body[data-view=tool] .stage-heading h1{font-size:27px}.stage-heading .page-heading .eyebrow{font-size:11px}.method-thread{gap:7px}.method-thread .stage-glyph{width:42px;height:42px}.method-thread>a{font-size:11px;line-height:1.6}.method-thread>a:not(:last-child):after{left:44px;top:21px}.home-method-preview .journey-step:not(:last-child):after{display:none}.companion-launcher>span{font-size:12px;max-width:130px;line-height:1.5}.companion-launcher .button{font-size:13px;padding:8px 12px}.companion-dialog .companion-content{padding-inline:24px}.companion-dialog .preview-value,.companion-dialog .companion-example blockquote{font-size:16px}.companion-dialog .preview-edit{min-height:36px;display:flex;align-items:center}.companion-tabs button{min-height:46px}.field-example{padding-block:5px}.field-heading{gap:5px 12px}}
+
+/* Placement controls are siblings of trend buttons, so the whole cell remains a target. */
+.worksheet-companion .preview-matrix .matrix-cell{position:relative;isolation:isolate;padding:42px 5px 7px}
+.worksheet-companion .matrix-place{position:absolute;inset:0;z-index:0;display:flex;align-items:flex-start;text-align:left;padding:7px 5px;border:0;border-radius:0;background:transparent;color:inherit;width:100%}
+.worksheet-companion .matrix-place .cell-label{pointer-events:none;margin:0}
+.worksheet-companion .matrix-place:focus-visible{outline-offset:-4px}
+.worksheet-companion .matrix-cell:has(.matrix-place:hover:not(:disabled)){background:#eaf1fa}
+.worksheet-companion .matrix-selected{box-shadow:inset 0 0 0 2px var(--blue)}
+.worksheet-companion .matrix-cell.matrix-drop-target{background:#d8e7fa;box-shadow:inset 0 0 0 3px var(--blue)}
+.worksheet-companion .matrix-trend{position:relative;z-index:1;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;min-width:0}
+.worksheet-companion .matrix-trend[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:white}
+.worksheet-companion .matrix-trend.matrix-dragging{opacity:.5;cursor:grabbing}
+.worksheet-companion .preview-unplaced-trend .matrix-trend{margin:0;flex:1;font-size:13px}
+.worksheet-companion .preview-unplaced-trend .preview-field-heading{align-items:center}
+.worksheet-companion .preview-unplaced-trend .preview-note{margin:0}
+.worksheet-companion .matrix-drag-preview{position:fixed;left:0;top:0;z-index:1000;pointer-events:none;max-width:210px;padding:8px 12px;background:var(--blue);color:white;border:1px solid white;border-radius:4px;box-shadow:0 4px 18px #172d4333;font:13px/1.5 var(--sans);overflow-wrap:anywhere}
+@media(pointer:coarse){.worksheet-companion .matrix-trend{min-height:44px}}

@@ -22,9 +22,11 @@ export function previewModel(session, stage, activeId = '') {
     ]));
   }
   if (stage === 'prioritise') {
-    sections.push({kind:'matrix', key:'matrix', title:'Your discussion matrix', trends});
+    sections.push({kind:'matrix', key:'matrix', title:'Prioritisation matrix', trends, activeId:active?.id || '', activeTitle:active?.title || ''});
     const trendList = (key, title, items, target) => ({...group(key, title, items.map(t => field(stage, `trend.${t.id}.${target}`, t.title, target === 'watch' ? 'On the watch list' : 'Choose both likelihood and impact.'))), emptyMessage:key === 'unassessed' && !trends.length ? 'Add a trend in Scan to begin comparing possibilities.' : ''});
-    sections.push(trendList('unassessed', 'Not yet placed', trends.filter(t => !t.likelihood || !t.impact), 'likelihood'));
+    const unassessed = trendList('unassessed', 'Not yet placed', trends.filter(t => !t.likelihood || !t.impact), 'likelihood');
+    unassessed.children = unassessed.children.map(item => ({...item, kind:'unplaced-trend', trend:trends.find(t => item.path === `trend.${t.id}.likelihood`), activeId:active?.id || ''}));
+    sections.push(unassessed);
     sections.push(trendList('watch-list', 'Watch list', trends.filter(t => t.watch), 'watch'));
     if (active) sections.push(group('assessment', active.title, [
       trendField('proposition', 'Proposition and time horizon'), trendField('likelihood', 'Likelihood'),
@@ -73,18 +75,27 @@ export function previewTargets(model) {
 function editButton(stage, path, label) {
   return `<button type="button" class="preview-edit" data-companion="edit" data-stage="${stage}" data-path="${escapeText(path)}" aria-label="Edit ${escapeText(label)}">Edit</button>`;
 }
+function trendButton(trend, activeId) {
+  return `<button type="button" class="matrix-trend" data-key="${escapeText(trend.id)}" data-companion="choose-trend" data-trend-id="${escapeText(trend.id)}" aria-pressed="${trend.id === activeId}" aria-label="Select trend: ${escapeText(trend.title)}" aria-describedby="matrix-instructions">${escapeText(trend.title)}</button>`;
+}
 function renderSection(section) {
   const {key, title, kind} = section;
   const safeKey = escapeText(key);
+  if (kind === 'unplaced-trend') return `<section class="preview-field preview-unplaced-trend" data-key="${safeKey}"><div class="preview-field-heading">${trendButton(section.trend, section.activeId)}${editButton(section.stage, section.path, title)}</div><p class="preview-note">Choose a cell or drag this trend into the matrix.</p></section>`;
   if (kind === 'review-summary') return `<section class="preview-group" data-key="${safeKey}"><h3>${escapeText(title)}</h3><p class="preview-note">Completion is not a quality score.</p></section>`;
   if (kind === 'field') {
     const empty = section.value === '' || section.value == null || (typeof section.value === 'string' && !section.value.trim());
     return `<section class="preview-field ${section.tone || ''}" data-key="${safeKey}"><div class="preview-field-heading"><h4>${escapeText(title)}</h4>${editButton(section.stage, section.path, title)}</div><p class="preview-value${empty ? ' preview-empty' : ''}">${empty ? 'Not recorded yet.' : escapeText(section.value)}</p></section>`;
   }
   if (kind === 'matrix') {
-    return `<section data-key="matrix" class="preview-matrix"><h3>${escapeText(title)}</h3><p class="preview-note">Qualitative judgements for discussion. Votes are entered manually; neither is a risk score.</p><div class="matrix-wrap"><div class="matrix-y-label">Humanitarian impact ↑</div><div class="matrix-grid">${[...levels].reverse().map(impact => levels.map(likelihood => `<div class="matrix-cell${impact === 'High' && likelihood === 'High' ? ' matrix-high' : ''}" data-key="cell-${impact}-${likelihood}"><span class="cell-label">${impact} impact<br>${likelihood.toLowerCase()} likelihood</span>${section.trends.filter(t => t.impact === impact && t.likelihood === likelihood).map(t => `<button type="button" class="matrix-trend" data-key="${escapeText(t.id)}" data-companion="edit" data-stage="prioritise" data-path="trend.${escapeText(t.id)}.proposition" aria-label="Edit assessment: ${escapeText(t.title)}">${escapeText(t.title)}</button>`).join('')}</div>`).join('')).join('')}</div><div class="matrix-x-label">Likelihood →</div></div></section>`;
+    const active = section.trends.find(t => t.id === section.activeId);
+    const cells = [...levels].reverse().flatMap(impact => levels.map(likelihood => {
+      const selected = active?.impact === impact && active?.likelihood === likelihood;
+      return `<div class="matrix-cell${impact === 'High' && likelihood === 'High' ? ' matrix-high' : ''}${selected ? ' matrix-selected' : ''}" data-key="cell-${impact}-${likelihood}" data-impact="${impact}" data-likelihood="${likelihood}"><button type="button" class="matrix-place" data-companion="place-trend" aria-label="${escapeText(section.activeTitle ? `Place ${section.activeTitle}` : 'Place selected trend')}: ${likelihood.toLowerCase()} likelihood, ${impact.toLowerCase()} impact" aria-describedby="matrix-instructions" ${section.activeId ? '' : 'disabled'}><span class="cell-label">${impact} impact<br>${likelihood.toLowerCase()} likelihood</span></button>${section.trends.filter(t => t.impact === impact && t.likelihood === likelihood).map(t => trendButton(t, section.activeId)).join('')}</div>`;
+    })).join('');
+    return `<section data-key="matrix" class="preview-matrix"><h3>${escapeText(title)}</h3><p class="preview-note">Qualitative judgements for discussion. Votes are entered manually; neither is a risk score.</p><p class="preview-note" id="matrix-instructions">Select a trend, then click a cell to set its likelihood and impact, or drag the trend into a cell. You can also use Tab and Enter or Space.</p><div class="matrix-wrap"><div class="matrix-y-label">Humanitarian impact ↑</div><div class="matrix-grid">${cells}</div><div class="matrix-x-label">Likelihood →</div></div></section>`;
   }
-  const content = section.children.map(renderSection).join('') || `<p class="preview-empty">${section.emptyMessage || (key === 'shortlist' ? 'Select trends in the worksheet to bring them into the story.' : key === 'watch-list' ? 'No trends on the watch list yet.' : 'Every trend has both assessment labels.')}</p>`;
+  const content = section.children.map(renderSection).join('') || `<p class="preview-empty">${section.emptyMessage || (key === 'shortlist' ? 'Select trends in the worksheet to bring them into the story.' : key === 'watch-list' ? 'No trends on the watch list yet.' : 'Every trend has been prioritised.')}</p>`;
   if (kind === 'disclosure') return `<details class="preview-disclosure" data-key="${safeKey}"><summary>${escapeText(title)}</summary>${content}</details>`;
   return `<section class="preview-group preview-${kind}" data-key="${safeKey}"><h3>${escapeText(title)}</h3>${kind === 'pathway' ? '<p class="preview-note">Proposed connections, not proof of causality.</p>' : ''}${content}</section>`;
 }

@@ -30,4 +30,6 @@ Run `npm test` for navigation coverage, route ancestry and focus targets, readin
 
 Preview tests also cover all five stages, partial assessments, retained drafts, assumptions, escaping and model purity. Check companion panels at 1440px, 1280px, 1024px and 390px, including keyboard tabs, dialog focus, Escape, scrolling, contextual examples and Edit links. Panel interactions must preserve form inputs and keep fictional content out of saved work and exports.
 
+In the Prioritise preview, select a trend and click a cell, or drag a placed or unplaced trend into the matrix. Keyboard users can select a trend and activate a cell with Enter or Space. Browser QA should check mouse and touch placement, occupied cells, same-cell drops, cancellation, edge scrolling, selection/focus retention and category persistence after reload.
+
 Fictional examples remain separate from user sessions. Qualitative labels and votes support discussion; the site does not compute risk scores or select priorities automatically.

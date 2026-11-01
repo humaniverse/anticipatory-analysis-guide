@@ -31,11 +31,12 @@ function patchChildren(parent, next) {
   while (cursor) { const nextSibling = cursor.nextSibling; cursor.remove(); cursor = nextSibling; }
 }
 
-export function createWorksheetCompanion({getSession, editField}) {
+export function createWorksheetCompanion({getSession, editField, categoriseTrend}) {
   const preferences = new Map();
   const desktop = window.matchMedia('(min-width:1280px)');
   let stage = null, panel = null, dialog = null, host = null, frame = null;
   let returnFocus = null, returnScroll = 0, oldOverflow = '', modal = false;
+  let drag = null, dragFrame = null, suppressedClick = null;
   const prefs = () => preferences.get(stage);
   const content = tab => panel?.querySelector(`#companion-${tab}`);
   const remember = () => {
@@ -56,6 +57,7 @@ export function createWorksheetCompanion({getSession, editField}) {
     panel.querySelector('[data-companion="close"]').textContent = desktop.matches ? 'Hide panel' : 'Close';
   }
   function selectTab(tab, focus = false, savePosition = true) {
+    cancelDrag();
     if (savePosition) remember();
     prefs().tab = tab;
     panel.querySelector('#companion-title').textContent = tab === 'example' ? 'Fictional example' : 'See your thinking take shape';
@@ -69,6 +71,7 @@ export function createWorksheetCompanion({getSession, editField}) {
     if (focus) panel.querySelector(`#companion-tab-${tab}`).focus({preventScroll:true});
   }
   function closeModal(restore = true) {
+    cancelDrag();
     if (!modal) return;
     remember();
     modal = false;
@@ -104,22 +107,82 @@ export function createWorksheetCompanion({getSession, editField}) {
       }
     }
   }
-  function refresh() {
-    if (!panel || !stage) return;
+  function refresh(selectionDuringDrag = false) {
+    if (!panel || !stage || (drag && !selectionDuringDrag)) return;
     const model = previewModel(getSession(), stage, prefs().activeId);
     prefs().activeId = model.activeId;
     const pane = content('preview');
     const scroll = pane.scrollTop;
+    const focusedTrend = pane.contains(document.activeElement) ? document.activeElement.dataset.trendId : null;
     const template = document.createElement('template');
     template.innerHTML = renderPreview(model);
     patchChildren(pane, template.content);
+    if (focusedTrend) trendControl(focusedTrend)?.focus({preventScroll:true});
     pane.scrollTop = scroll;
+  }
+  function trendControl(id) {
+    return [...content('preview').querySelectorAll('[data-trend-id]')].find(node => node.dataset.trendId === id);
+  }
+  function placeTrend(id, cell, focusTrend = false) {
+    if (stage !== 'prioritise' || !panel?.contains(cell) || !getSession().trends.some(t => t.id === id)) return;
+    const {likelihood, impact} = cell.dataset;
+    if (!categoriseTrend?.(id, likelihood, impact)) return;
+    prefs().activeId = id;
+    refresh();
+    if (focusTrend) trendControl(id)?.focus({preventScroll:true});
+    const title = trendControl(id)?.textContent;
+    panel.querySelector('.matrix-status').textContent = `${title}: ${likelihood.toLowerCase()} likelihood, ${impact.toLowerCase()} impact.`;
+  }
+  function dropCell(x, y) {
+    const pane = content('preview');
+    const rect = pane.getBoundingClientRect();
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return null;
+    const cell = document.elementFromPoint(x, y)?.closest('.matrix-cell');
+    return cell && pane.contains(cell) ? cell : null;
+  }
+  function updateDrag() {
+    if (!drag?.active) return;
+    const x = Math.max(8, Math.min(drag.x + 12, window.innerWidth - drag.ghost.offsetWidth - 8));
+    const y = Math.max(8, Math.min(drag.y + 12, window.innerHeight - drag.ghost.offsetHeight - 8));
+    drag.ghost.style.transform = `translate(${x}px, ${y}px)`;
+    const cell = dropCell(drag.x, drag.y);
+    if (cell !== drag.cell) {
+      drag.cell?.classList.remove('matrix-drop-target');
+      drag.cell = cell;
+      cell?.classList.add('matrix-drop-target');
+    }
+  }
+  function scrollDrag() {
+    if (!drag?.active) return;
+    const pane = content('preview'), rect = pane.getBoundingClientRect();
+    const top = Math.max(0, rect.top), bottom = Math.min(window.innerHeight, rect.bottom);
+    if (drag.x >= rect.left && drag.x <= rect.right && drag.y >= top && drag.y <= bottom) {
+      const edge = 40;
+      const speed = drag.y < top + edge ? -10 * (1 - (drag.y - top) / edge) : drag.y > bottom - edge ? 10 * (1 - (bottom - drag.y) / edge) : 0;
+      if (speed) pane.scrollTop += speed;
+    }
+    updateDrag();
+    dragFrame = requestAnimationFrame(scrollDrag);
+  }
+  function cancelDrag() {
+    if (!drag) return;
+    const previous = drag;
+    drag = null;
+    if (dragFrame != null) cancelAnimationFrame(dragFrame);
+    dragFrame = null;
+    previous.ghost?.remove();
+    previous.cell?.classList.remove('matrix-drop-target');
+    previous.source.classList.remove('matrix-dragging');
+    if (previous.source.hasPointerCapture(previous.pointerId)) previous.source.releasePointerCapture(previous.pointerId);
+    if (previous.active) suppressedClick = {pointerId:previous.pointerId, until:performance.now() + 600};
+    scheduleRefresh();
   }
   function scheduleRefresh() {
     if (frame != null) return;
     frame = requestAnimationFrame(() => { frame = null; refresh(); });
   }
   function beforeRender() {
+    cancelDrag();
     remember();
     closeModal(false);
     if (frame != null) cancelAnimationFrame(frame);
@@ -134,7 +197,7 @@ export function createWorksheetCompanion({getSession, editField}) {
     panel = document.createElement('section');
     panel.className = 'worksheet-companion';
     panel.setAttribute('aria-label', 'Worksheet preview and example');
-    panel.innerHTML = `<div class="companion-heading"><span id="companion-title">See your thinking take shape</span><button type="button" data-companion="close">Hide panel</button></div><div class="companion-tabs" role="tablist" aria-label="Worksheet companion"><button type="button" id="companion-tab-preview" role="tab" aria-controls="companion-preview" data-companion="tab" data-tab="preview">Your preview</button><button type="button" id="companion-tab-example" role="tab" aria-controls="companion-example" data-companion="tab" data-tab="example">Example</button></div><div class="companion-content" id="companion-preview" role="tabpanel" tabindex="0" aria-labelledby="companion-tab-preview"></div><div class="companion-content" id="companion-example" role="tabpanel" tabindex="0" aria-labelledby="companion-tab-example">${renderCompanionExample(stage)}</div>`;
+    panel.innerHTML = `<div class="companion-heading"><span id="companion-title">See your thinking take shape</span><button type="button" data-companion="close">Hide panel</button></div><div class="companion-tabs" role="tablist" aria-label="Worksheet companion"><button type="button" id="companion-tab-preview" role="tab" aria-controls="companion-preview" data-companion="tab" data-tab="preview">Your preview</button><button type="button" id="companion-tab-example" role="tab" aria-controls="companion-example" data-companion="tab" data-tab="example">Example</button></div><div class="matrix-status sr-only" role="status" aria-live="polite" aria-atomic="true"></div><div class="companion-content" id="companion-preview" role="tabpanel" tabindex="0" aria-labelledby="companion-tab-preview"></div><div class="companion-content" id="companion-example" role="tabpanel" tabindex="0" aria-labelledby="companion-tab-example">${renderCompanionExample(stage)}</div>`;
     host.append(panel);
     refresh();
     for (const node of content('preview').querySelectorAll('details[data-key]')) node.open = prefs().open.includes(node.dataset.key);
@@ -144,14 +207,65 @@ export function createWorksheetCompanion({getSession, editField}) {
     syncLayout();
     dialog.addEventListener('cancel', event => { event.preventDefault(); closeModal(); });
   }
+  document.addEventListener('pointerdown', event => {
+    const source = event.target.closest('[data-companion="choose-trend"]');
+    if (!source || !panel?.contains(source) || stage !== 'prioritise' || event.button !== 0 || !event.isPrimary) return;
+    cancelDrag();
+    suppressedClick = null;
+    drag = {source, id:source.dataset.trendId, pointerId:event.pointerId, startX:event.clientX, startY:event.clientY, x:event.clientX, y:event.clientY, active:false};
+  });
+  document.addEventListener('pointermove', event => {
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    drag.x = event.clientX;
+    drag.y = event.clientY;
+    if (!drag.active && Math.hypot(drag.x - drag.startX, drag.y - drag.startY) >= 6) {
+      drag.active = true;
+      prefs().activeId = drag.id;
+      // Only selection changes here; keep the source mounted before capturing its pointer.
+      refresh(true);
+      drag.source.setPointerCapture(drag.pointerId);
+      drag.source.classList.add('matrix-dragging');
+      drag.ghost = document.createElement('div');
+      drag.ghost.className = 'matrix-drag-preview';
+      drag.ghost.setAttribute('aria-hidden', 'true');
+      drag.ghost.textContent = drag.source.textContent;
+      panel.append(drag.ghost);
+      scrollDrag();
+    }
+    if (drag.active) { event.preventDefault(); updateDrag(); }
+  }, {passive:false});
+  document.addEventListener('pointerup', event => {
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const {id, active} = drag;
+    const cell = active ? dropCell(event.clientX, event.clientY) : null;
+    cancelDrag();
+    if (cell) placeTrend(id, cell, true);
+  });
+  document.addEventListener('pointercancel', event => { if (drag?.pointerId === event.pointerId) cancelDrag(); });
+  document.addEventListener('lostpointercapture', event => { if (drag?.pointerId === event.pointerId) cancelDrag(); });
+  window.addEventListener('blur', cancelDrag);
+  document.addEventListener('dragstart', event => { if (event.target.closest('[data-companion="choose-trend"]')) event.preventDefault(); });
+  document.addEventListener('click', event => {
+    if (suppressedClick && performance.now() <= suppressedClick.until && event.detail > 0 && (event.pointerId == null || event.pointerId === suppressedClick.pointerId)) {
+      suppressedClick = null;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
   document.addEventListener('click', event => {
     const button = event.target.closest('[data-companion]');
     if (!button || !panel) return;
     const action = button.dataset.companion;
+    if (action === 'choose-trend') {
+      prefs().activeId = button.dataset.trendId;
+      refresh();
+    }
+    if (action === 'place-trend') placeTrend(prefs().activeId, button.closest('.matrix-cell'));
     if (action === 'open') openPanel(button.dataset.tab, button);
     if (action === 'example') openPanel('example', button, button.dataset.example || 'overview');
     if (action === 'tab') selectTab(button.dataset.tab);
     if (action === 'close') {
+      cancelDrag();
       if (modal) closeModal();
       else { remember(); prefs().hidden = true; syncLayout(); document.querySelector('[data-companion="open"]').focus({preventScroll:true}); }
     }
@@ -162,6 +276,7 @@ export function createWorksheetCompanion({getSession, editField}) {
   });
   document.addEventListener('change', event => {
     if (event.target.matches('[data-companion="select-trend"]') && panel) {
+      cancelDrag();
       prefs().activeId = event.target.value;
       refresh();
     }
@@ -172,6 +287,12 @@ export function createWorksheetCompanion({getSession, editField}) {
     if (['trend','brief'].includes(group) && prefs().activeId !== id) { prefs().activeId = id; scheduleRefresh(); }
   });
   document.addEventListener('keydown', event => {
+    if (drag?.active && event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      cancelDrag();
+      return;
+    }
     if (modal && event.key === 'Tab') {
       const focusable = [...panel.querySelectorAll('button,a[href],select,summary,[tabindex]')].filter(node => !node.disabled && node.tabIndex >= 0 && node.getClientRects().length);
       const first = focusable[0], last = focusable.at(-1);
@@ -189,6 +310,7 @@ export function createWorksheetCompanion({getSession, editField}) {
   });
   desktop.addEventListener('change', () => {
     if (!panel) return;
+    cancelDrag();
     const wasPanelFocus = panel.contains(document.activeElement);
     closeModal(false);
     remember();

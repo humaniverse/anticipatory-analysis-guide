@@ -38,6 +38,8 @@ Each of the five worksheets has a companion with **Your preview** and **Luma exa
 
 The previews are derived from existing session fields: the active trend card, a qualitative matrix with unplaced trends and a watch list, a proposed causal pathway, the current briefing, and that briefing with review notes and checklist status. Briefing drafts outside the shortlist remain visibly separate. Empty fields remain empty; previews neither generate analysis nor score its quality. Edit links expand and focus the original field, including navigation from review back to writing. Keyed presentation updates preserve caret position and open assumptions.
 
+The Prioritise preview supports direct placement. Select a trend through the dropdown, its preview button or a worksheet field, then click a matrix cell to assign both likelihood and impact. Trend buttons in the matrix and Not yet placed list also support dragging with mouse, touch or pen. Cell buttons provide keyboard placement with Enter or Space. Placement saves the existing category fields and synchronises the worksheet selects without remounting the editor. Dragging highlights its destination and scrolls the preview at its visible edges; Escape or a drop outside the matrix cancels it. Closing, switching tabs or changing responsive layout also cancels a drag. Selection and drag state remain transient.
+
 Example controls beside writing fields open relevant excerpts from the existing fictional case with a short explanation of the reasoning. The panel heading keeps the fictional label visible even while scrolling. Examples do not populate fields or enter backups and exports. The original full worked-example routes remain available.
 
 ## Connected visual thread

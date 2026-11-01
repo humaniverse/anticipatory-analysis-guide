@@ -9,7 +9,7 @@ export const mainDestinations = [
 
 export const learningGroups = [
   {id:'before-you-begin',label:'Before you begin',description:'Connect the analysis to a purpose, an audience and a useful question.',lessonIds:['purpose']},
-  {id:'five-stages',label:'The trend analysis method',description:'Follow the process from emerging change to a challenged briefing.',lessonIds:stages.map(s=>s.id)},
+  {id:'five-stages',label:'The trend analysis method',description:'Follow the process from emerging change to a final briefing.',lessonIds:stages.map(s=>s.id)},
   {id:'facilitation',label:'Facilitation and collaboration',description:'Bring different perspectives together and make room for people to think.',lessonIds:['collaboration','ai','care']},
   {id:'communicate-and-continue',label:'Communicate and continue',description:'Make the analysis useful, share the learning and prepare for the next cycle.',lessonIds:['communicate','network','follow-through']}
 ].map(group=>({...group,href:`#method/${group.id}`,anchor:`learn-${group.id}`}));
@@ -32,11 +32,13 @@ const groupCrumb = group => ({label:group.label,href:group.href,kind:'group'});
 // Route ownership is independent of how a visitor arrived at a page.
 export function routeContext(hash='',sourceSections=[]) {
   const [view='home',id,...extra]=(hash.replace(/^#/,'')||'home').split('/');
-  const href=`#${view}${id?`/${id}`:''}`;
+  const checklistSection=view==='tool'&&id==='review'&&extra.length===1&&extra[0]==='checklist';
+  const href=`#${view}${id?`/${id}`:''}${checklistSection?'/checklist':''}`;
   const result={view,id,href,section:null,group:null,title:'Page not found',breadcrumbs:[],anchor:null,valid:false};
-  if(extra.length)return result;
+  if(extra.length&&!checklistSection)return result;
   const set=(section,title,breadcrumbs=[],anchor=null,group=null)=>({...result,section,title,breadcrumbs,anchor,group,valid:true});
   const current=label=>({label});
+  if(checklistSection)return set('session','Final checklist',[rootCrumb('session'),{label:'Challenge and refine',href:'#tool/review'},current('Final checklist')],'final-checklist');
   if(view==='home'&&!id)return set('home','Home');
   if(view==='method') {
     const group=learningGroups.find(item=>item.id===id);
@@ -60,7 +62,7 @@ export function routeContext(hash='',sourceSections=[]) {
     if(id&&id!=='downloads')return result;
     return id?set('session','Save and download',[rootCrumb('session'),current('Save and download')],'session-downloads'):set('session','Your working session',[current('Your working session')]);
   }
-  if(view==='checklist'&&!id)return set('session','Final checklist',[rootCrumb('session'),current('Final checklist')]);
+  if(view==='checklist'&&!id)return routeContext('#tool/review/checklist',sourceSections);
   if(view==='print'&&!id)return set('session','Print preview',[rootCrumb('session'),{label:'Save and download',href:'#session/downloads'},current('Print preview')]);
   if(view==='facilitate') {
     if(id&&id!=='agenda')return result;
@@ -68,8 +70,7 @@ export function routeContext(hash='',sourceSections=[]) {
   }
   if(view==='present'&&!id)return set('facilitate','Facilitator view',[rootCrumb('facilitate'),current('Facilitator view')]);
   if(view==='communicate'&&!id) {
-    const group=learningGroups.find(item=>item.id==='communicate-and-continue');
-    return set('method','Communication overview',[rootCrumb('method'),groupCrumb(group),current('Communication overview')],null,group);
+    return routeContext('#method/communicate-and-continue',sourceSections);
   }
   if(view==='source') {
     if(!id)return set(null,'The source guide',[current('The source guide')]);
@@ -82,9 +83,9 @@ export function routeContext(hash='',sourceSections=[]) {
 
 export function contextualLinks(section) {
   if(section==='session')return [
-    {href:'#session',label:'Session brief'},
+    {href:'#session',label:'Define your analysis'},
     ...stages.map(stage=>({href:`#tool/${stage.id}`,label:stage.title,stage:Number(stage.number)})),
-    {href:'#checklist',label:'Final checklist'},
+    {href:'#tool/review/checklist',label:'Final checklist'},
     {href:'#session/downloads',label:'Save and download'}
   ];
   if(section==='facilitate')return [
@@ -105,8 +106,8 @@ const utilityEntries=[
   {href:'#facilitate',title:'Workshop planning',description:'Prepare your workshop and find supporting facilitation lessons.',terms:'facilitator collaboration participants'},
   {href:'#facilitate/agenda',title:'Workshop agenda',description:'Edit the stages and timings for your workshop.',terms:'agenda minutes duration breaks'},
   {href:'#present',title:'Facilitator view',description:'Present the instructions and run the workshop timer.',terms:'timer presentation fullscreen sprint'},
-  {href:'#checklist',title:'Final checklist',description:'Review twelve questions before sharing the briefing.',terms:'publication review quality'},
-  {href:'#communicate',title:'Communication overview',description:'Share the analysis, build an analytical network and follow through.',terms:'communication network learning'},
+  {href:'#tool/review/checklist',title:'Final checklist',description:'Review twelve questions at the end of Challenge and refine, before sharing the briefing.',terms:'publication review quality'},
+  {href:'#method/communicate-and-continue',title:'Communicate and continue',description:'Share the analysis, build an analytical network and follow through.',terms:'communication network learning'},
   {href:'#source',title:'The source guide',description:'Read the complete original guide and its references.',terms:'original reference sources'}
 ];
 
@@ -120,7 +121,7 @@ export function searchNavigation(query,sourceSections=[]) {
   const q=query.trim().toLowerCase();
   if(!q)return [
     {href:'#method',title:'Learn the method',description:`Find all ${lessons.length} lessons, grouped by topic.`},
-    ...['#session','#facilitate','#checklist','#source'].map(href=>utilityEntries.find(entry=>entry.href===href))
+    ...['#session','#facilitate','#tool/review/checklist','#source'].map(href=>utilityEntries.find(entry=>entry.href===href))
   ].map(decorate);
   const entries=[
     ...lessons.map(lesson=>({href:`#lesson/${lesson.id}`,title:lesson.title,description:lesson.deck,terms:[lesson.id,groupForLesson(lesson.id).label,'lesson',lesson.why,...lesson.actions,...lesson.deeper.flat(),lesson.tip].join(' ')})),

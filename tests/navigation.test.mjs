@@ -36,12 +36,29 @@ test('Deep links identify the correct learning ancestry and focus target',()=>{
  assert.deepEqual(purpose.breadcrumbs.map(crumb=>crumb.label),['Learn the method','Before you begin','Define the decision and audience']);
  assert.deepEqual(purpose.breadcrumbs.slice(0,-1).map(crumb=>crumb.href),['#method','#method/before-you-begin']);
  assert.deepEqual(routeContext('#lesson/audience'),purpose);
+ assert.deepEqual(routeContext('#communicate'),routeContext('#method/communicate-and-continue'));
+ assert.equal(routeContext('#communicate').anchor,'learn-communicate-and-continue');
  assert.equal(routeContext('#method/facilitation').anchor,'learn-facilitation');
  assert.equal(routeContext('#session/downloads').anchor,'session-downloads');
  assert.equal(routeContext('#facilitate/agenda').anchor,'workshop-agenda');
  assert.equal(routeContext('#source/3').anchor,'source-3');
  assert.deepEqual(routeContext('#home').breadcrumbs,[]);
  for(const invalid of ['#lesson/missing','#tool/purpose','#tool/audience','#example/audience','#method/missing','#session/missing','#facilitate/missing','#source/99','#lesson/scan/extra','#lesson/audience/extra','#unknown'])assert.equal(routeContext(invalid).valid,false,invalid);
+});
+
+test('Final checklist shortcuts resolve to the review worksheet and its focus target',()=>{
+ const context=routeContext('#tool/review/checklist');
+ assert.equal(context.valid,true);
+ assert.equal(context.view,'tool');
+ assert.equal(context.id,'review');
+ assert.equal(context.anchor,'final-checklist');
+ assert.deepEqual(context.breadcrumbs.map(crumb=>crumb.label),['Your working session','Challenge and refine','Final checklist']);
+ assert.deepEqual(routeContext('#checklist'),context);
+ assert.ok(contextualLinks('session').some(item=>item.href===context.href&&item.label==='Final checklist'));
+ const results=searchNavigation('checklist');
+ assert.equal(results.filter(item=>item.href===context.href).length,1);
+ assert.equal(results.find(item=>item.href===context.href).path,'Your working session / Challenge and refine');
+ for(const hash of ['#tool/review/unknown','#tool/scan/checklist','#example/review/checklist','#tool/review/checklist/extra','#checklist/extra'])assert.equal(routeContext(hash).valid,false,hash);
 });
 
 test('Reading order joins foundations, the stages, facilitation and communication without dead ends',()=>{
@@ -55,7 +72,7 @@ test('Reading order joins foundations, the stages, facilitation and communicatio
 });
 
 test('Search exposes lessons, working tools and examples with explicit section paths',()=>{
- assert.deepEqual(searchNavigation('').map(item=>item.href),['#method','#session','#facilitate','#checklist','#source']);
+ assert.deepEqual(searchNavigation('').map(item=>item.href),['#method','#session','#facilitate','#tool/review/checklist','#source']);
  assert.ok(searchNavigation('purpose').some(item=>item.href==='#lesson/purpose'&&item.path.startsWith('Learn the method / Before you begin')));
  for(const query of ['decision','audience']) {
    const results=searchNavigation(query);
@@ -66,6 +83,10 @@ test('Search exposes lessons, working tools and examples with explicit section p
  assert.equal(searchNavigation('Luma').filter(item=>item.href.startsWith('#example/')).length,5);
  assert.ok(searchNavigation('timer').some(item=>item.href==='#present'&&item.path.startsWith('Facilitate a workshop')));
  assert.ok(searchNavigation('restore').some(item=>item.href==='#session/downloads'));
+ const communication=searchNavigation('communicat');
+ for(const id of ['communicate','network','follow-through'])assert.ok(communication.some(item=>item.href===`#lesson/${id}`));
+ assert.ok(!communication.some(item=>item.href==='#communicate'));
+ assert.ok(searchNavigation('communication').some(item=>item.href==='#method/communicate-and-continue'));
  assert.deepEqual(searchNavigation('unmatchable-zxqv-12345'),[]);
 });
 
